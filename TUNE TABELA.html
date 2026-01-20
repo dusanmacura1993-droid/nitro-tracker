@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<title>Tracker Zarade</title>
+
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAbxxQyWyf9iAT_AE9b-o41BRqcrnXaNy8",
+  authDomain: "nitro-55cdd.firebaseapp.com",
+  databaseURL: "https://nitro-55cdd-default-rtdb.firebaseio.com",
+  projectId: "nitro-55cdd",
+  storageBucket: "nitro-55cdd.firebasestorage.app",
+  messagingSenderId: "365206404307",
+  appId: "1:365206404307:web:794d0420e125760a572826",
+  measurementId: "G-KLEQB19JDB"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database().ref("moneyTracker");
+
+let day = 1;
+
+// Listen for live changes
+db.on("value", snapshot => {
+    const data = snapshot.val();
+    if(data){
+        renderTable(data);
+        updateProgress(data);
+    }
+});
+
+// Render table
+function renderTable(data){
+    const t=document.getElementById("table");
+    t.innerHTML=`<tr>
+        <th>IME</th>
+        <th>FULL TUNE</th>
+        <th>CUSTOM ZVUK</th>
+        <th>UKUPNO ZARADA</th>
+    </tr>`;
+    for(let person in data){
+        const r = t.insertRow();
+        r.setAttribute("data-name", person);
+        const ft = data[person].fullTune||0;
+        const zv = data[person].customZvuk||0;
+        const total = ft*100000 + zv*200000;
+        r.innerHTML=`<td class="name">${person}</td>
+        <td><input type="number" value="${ft}" onchange="save(this)"></td>
+        <td><input type="number" value="${zv}" onchange="save(this)"></td>
+        <td class="total">${total}</td>`;
+    }
+}
+
+// Save input to Firebase
+function save(input){
+    const row = input.parentElement.parentElement;
+    const name = row.getAttribute("data-name");
+    const ft = Number(row.cells[1].children[0].value)||0;
+    const zv = Number(row.cells[2].children[0].value)||0;
+    db.child(name).set({fullTune: ft, customZvuk: zv});
+}
+
+// Add person
+function addPerson(){
+    const name = prompt("Unesi ime novog igrača:");
+    if(!name) return;
+    db.child(name).set({fullTune:0,customZvuk:0});
+}
+
+// Next day
+function nextDay(){
+    day++;
+    db.once("value").then(snap=>{
+        const data = snap.val();
+        for(let person in data){
+            db.child(person).set({fullTune:0,customZvuk:0});
+        }
+    });
+    alert("📅 Počinje DAY "+day);
+}
+
+// Update progress bar and chart
+function updateProgress(data){
+    let totalAll=0;
+    let topName="";
+    let topValue=0;
+    for(let person in data){
+        const total = (data[person].fullTune||0)*100000 + (data[person].customZvuk||0)*200000;
+        row = document.querySelector(`tr[data-name='${person}'] .total`);
+        if(row) row.innerText = total;
+        totalAll += total;
+        if(total>topValue){ topValue=total; topName=person; }
+    }
+
+    document.getElementById("total").innerText = totalAll;
+    document.getElementById("top").innerText = topName+" ("+topValue+")";
+    document.getElementById("bonus").innerText = Math.round(totalAll*0.1);
+
+    let percent=Math.min((totalAll/2000000)*100,100); // adjust max if needed
+    document.getElementById("bar").style.width=percent+"%";
+
+    draw(totalAll);
+}
+
+// Draw simple chart
+function draw(val){
+    const c=document.getElementById("chart");
+    const x=c.getContext("2d");
+    x.clearRect(0,0,c.width,c.height);
+    x.fillStyle="#00ffff";
+    let h = Math.min(val/2000000*180,180);
+    x.fillRect(130,200-h,60,h);
+    x.fillStyle="#fff";
+    x.fillText("DAY "+day,10,15);
+    x.fillText(val+"$",120,15);
+}
+</script>
+
+<style>
+body{background:#080808;color:#eaeaea;font-family:Arial, sans-serif;display:flex;gap:25px;padding:20px;}
+h1{color:#00ffff;letter-spacing:4px;margin-bottom:10px;}
+table{border-collapse:collapse;background:#101010;box-shadow:0 0 25px rgba(0,255,255,0.35);}
+th,td{border:1px solid #2a2a2a;padding:8px;text-align:center;}
+th{background:#0c0c0c;color:#00ffff;}
+input{width:70px;background:#1a1a1a;border:1px solid #333;color:#00ff99;text-align:center;}
+.name{color:#fff;font-weight:bold;}
+button{background:#00ffff;border:none;padding:10px 14px;margin-top:8px;font-weight:bold;cursor:pointer;}
+button:hover{background:#00cccc;}
+.panel{display:flex;flex-direction:column;}
+.progress-bar{width:400px;height:25px;background:#222;border:1px solid #00ffff;margin-top:10px;}
+.progress{height:100%;width:0%;background:linear-gradient(90deg,#00ff99,#00ffff);}
+canvas{background:#0f0f0f;border:1px solid #00ffff;}
+.stats{margin-top:10px;}
+</style>
+</head>
+
+<body>
+<div class="panel">
+<h1>TRACKER ZARADE</h1>
+<table id="table"></table>
+
+<button onclick="addPerson()">➕ Dodaj igrača</button>
+<button onclick="nextDay()">📅 Novi dan</button>
+
+<p>Ukupno zarada: <span id="total">0</span> $</p>
+<p>Najviše uradio: <span id="top">-</span></p>
+<p>Bonus 10%: <span id="bonus">0</span> $</p>
+
+<div class="progress-bar"><div class="progress" id="bar"></div></div>
+</div>
+
+<canvas id="chart" width="400" height="220"></canvas>
+</body>
+</html>
