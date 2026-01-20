@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<title>NITRO TRACKER</title>
+
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAbxxQyWyf9iAT_AE9b-o41BRqcrnXaNy8",
+  authDomain: "nitro-55cdd.firebaseapp.com",
+  databaseURL: "https://nitro-55cdd-default-rtdb.firebaseio.com",
+  projectId: "nitro-55cdd",
+  storageBucket: "nitro-55cdd.firebasestorage.app",
+  messagingSenderId: "365206404307",
+  appId: "1:365206404307:web:794d0420e125760a572826",
+  measurementId: "G-KLEQB19JDB"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database().ref("nitro");
+
+// Current day
+let day = 1;
+
+// Listen for changes in DB
+db.on("value", snapshot => {
+    const data = snapshot.val();
+    if(data){
+        renderTable(data);
+        updateProgress(data);
+    }
+});
+
+// Render table from DB
+function renderTable(data){
+    const t=document.getElementById("table");
+    t.innerHTML=`<tr>
+        <th>IME</th>
+        <th>GUMA</th>
+        <th>ALU</th>
+        <th>CELI</th>
+        <th>SKARP</th>
+        <th>NITRO</th>
+    </tr>`;
+    for(let person in data){
+        const r = t.insertRow();
+        r.setAttribute("data-name", person);
+        r.innerHTML=`<td class="name">${person}</td>
+        <td><input type="number" value="${data[person].GUMA||0}" onchange="save(this)"></td>
+        <td><input type="number" value="${data[person].ALU||0}" onchange="save(this)"></td>
+        <td><input type="number" value="${data[person].CELI||0}" onchange="save(this)"></td>
+        <td><input type="number" value="${data[person].SKARP||0}" onchange="save(this)"></td>
+        <td><input type="number" class="nitro" value="${data[person].NITRO||0}" onchange="save(this)"></td>`;
+    }
+}
+
+// Save input to Firebase
+function save(input){
+    const row = input.parentElement.parentElement;
+    const name = row.getAttribute("data-name");
+    db.child(name).set({
+        GUMA: Number(row.cells[1].children[0].value)||0,
+        ALU: Number(row.cells[2].children[0].value)||0,
+        CELI: Number(row.cells[3].children[0].value)||0,
+        SKARP: Number(row.cells[4].children[0].value)||0,
+        NITRO: Number(row.cells[5].children[0].value)||0
+    });
+    db.once("value").then(snap=>{
+        updateProgress(snap.val());
+    });
+}
+
+// Add person
+function addPerson(){
+    const name = prompt("Unesi ime novog čoveka:");
+    if(!name) return;
+    db.child(name).set({GUMA:0,ALU:0,CELI:0,SKARP:0,NITRO:0});
+}
+
+// Next day
+function nextDay(){
+    day++;
+    db.once("value").then(snap=>{
+        const data = snap.val();
+        for(let person in data){
+            db.child(person).set({GUMA:0,ALU:0,CELI:0,SKARP:0,NITRO:0});
+        }
+    });
+    alert("📅 Počinje DAY "+day);
+}
+
+// Update progress bar and chart
+function updateProgress(data){
+    let total=0;
+    for(let person in data){
+        total+=data[person].NITRO||0;
+    }
+    document.getElementById("total").innerText=total;
+    let percent=Math.min((total/100)*100,100);
+    document.getElementById("bar").style.width=percent+"%";
+
+    if(total>=100){
+        alert("✅ DOSTIGNUTO 100 NITRO – SPREMNO ZA ISPORUKU!");
+    }
+
+    draw(total);
+}
+
+// Draw simple chart
+function draw(val){
+    const c=document.getElementById("chart");
+    const x=c.getContext("2d");
+    x.clearRect(0,0,c.width,c.height);
+    x.fillStyle="#00ffff";
+    let h=(val/100)*180;
+    x.fillRect(130,200-h,60,h);
+    x.fillStyle="#fff";
+    x.fillText("DAY "+day,10,15);
+    x.fillText(val+" / 100",120,15);
+}
+
+// Export for Discord
+function exportData(){
+    db.once("value").then(snap=>{
+        const data = snap.val();
+        let text="NITRO STATUS (DAY "+day+")\n";
+        for(let person in data){
+            text+=`${person} : ${data[person].NITRO||0} nitro\n`;
+        }
+        let total=0;
+        for(let person in data){
+            total+=data[person].NITRO||0;
+        }
+        text+="Ukupno: "+total+"/100";
+        navigator.clipboard.writeText(text);
+        alert("📋 Kopirano – spremno za Discord");
+    });
+}
+</script>
+
+<style>
+body{
+    background:#080808;
+    color:#eaeaea;
+    font-family:Arial, sans-serif;
+    display:flex;
+    gap:25px;
+    padding:20px;
+}
+h1{color:#00ffff;letter-spacing:4px;margin-bottom:10px;}
+table{border-collapse:collapse;background:#101010;box-shadow:0 0 25px rgba(0,255,255,0.35);}
+th,td{border:1px solid #2a2a2a;padding:8px;text-align:center;}
+th{background:#0c0c0c;color:#00ffff;}
+input{width:55px;background:#1a1a1a;border:1px solid #333;color:#00ff99;text-align:center;}
+.name{color:#fff;font-weight:bold;}
+button{background:#00ffff;border:none;padding:10px 14px;margin-top:8px;font-weight:bold;cursor:pointer;}
+button:hover{background:#00cccc;}
+.panel{display:flex;flex-direction:column;}
+.progress-bar{width:320px;height:25px;background:#222;border:1px solid #00ffff;}
+.progress{height:100%;width:0%;background:linear-gradient(90deg,#00ff99,#00ffff);}
+canvas{background:#0f0f0f;border:1px solid #00ffff;}
+</style>
+</head>
+
+<body>
+<div class="panel">
+<h1>NITRO</h1>
+<table id="table">
+<tr>
+<th>IME</th>
+<th>GUMA</th>
+<th>ALU</th>
+<th>CELI</th>
+<th>SKARP</th>
+<th>NITRO</th>
+</tr>
+</table>
+
+<button onclick="addPerson()">➕ Dodaj čoveka</button>
+<button onclick="nextDay()">📅 Novi dan</button>
+<button onclick="exportData()">📤 Export (Discord)</button>
+
+<p>Ukupno NITRO: <span id="total">0</span> / 100</p>
+<div class="progress-bar"><div class="progress" id="bar"></div></div>
+</div>
+
+<canvas id="chart" width="320" height="220"></canvas>
+
+</body>
+</html>
