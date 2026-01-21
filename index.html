@@ -1,665 +1,785 @@
 <!DOCTYPE html>
 <html lang="sr">
 <head>
-<meta charset="UTF-8">
-<title>Mandrilos Mechanic – Control Panel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mandrilos Mechanic – Control Panel</title>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#0b0b0b;color:#eaeaea}
-header{display:flex;align-items:center;gap:15px;padding:15px 25px;background:#111;border-bottom:2px solid #222}
-.logo{height:55px}
-.title{font-size:20px;font-weight:bold;letter-spacing:2px}
-.tabs{display:flex;gap:10px;padding:15px;background:#0f0f0f}
-.tab{padding:10px 18px;cursor:pointer;background:#1a1a1a;border:1px solid #333;border-radius:6px}
-.tab.active{background:#e53935;border-color:#e53935}
-.section{display:none;padding:25px}
-.section.active{display:block}
-.items{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:600px}
-.item{display:flex;justify-content:space-between;align-items:center;background:#161616;border:1px solid #2a2a2a;padding:10px}
-button{padding:8px 12px;background:#e53935;border:none;color:#fff;font-weight:bold;cursor:pointer}
-.table{border-collapse:collapse;margin-top:15px}
-.table th,.table td{border:1px solid #333;padding:8px;text-align:center}
-.box{background:#121212;border:1px solid #2a2a2a;padding:20px;margin-top:20px}
-.notice{color:#aaa;margin-top:8px}
-</style>
+  <style>
+    :root{
+      --bg:#0a0a0a;
+      --panel:#111;
+      --panel2:#141414;
+      --line:#2a2a2a;
+      --text:#eaeaea;
+      --muted:#a9a9a9;
+      --accent:#e53935;
+      --danger:#b71c1c;
+      --ok:#2ecc71;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    /* HEADER (full black) */
+    header{
+      background:#000;
+      border-bottom:1px solid #111;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:14px 18px;
+    }
+    .logo{
+      height:54px;
+      width:auto;
+      display:block;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      line-height:1.1;
+    }
+    .brand .title{
+      font-weight:900;
+      letter-spacing:2px;
+      font-size:18px;
+    }
+    .brand .sub{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+      letter-spacing:1px;
+    }
+
+    /* TABS */
+    .tabs{
+      background:#0d0d0d;
+      border-bottom:1px solid #1c1c1c;
+      padding:12px 12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .tab{
+      padding:10px 14px;
+      border-radius:10px;
+      border:1px solid #2c2c2c;
+      background:#151515;
+      color:var(--text);
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.5px;
+      transition:.15s;
+    }
+    .tab:hover{ transform:translateY(-1px); }
+    .tab.active{
+      background:var(--accent);
+      border-color:var(--accent);
+    }
+
+    /* LAYOUT */
+    .wrap{ padding:18px; }
+    .section{ display:none; animation:fade .18s ease; }
+    .section.active{ display:block; }
+    @keyframes fade{
+      from{ opacity:0; transform:translateY(5px); }
+      to{ opacity:1; transform:none; }
+    }
+
+    /* PANELS */
+    .box{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      margin:12px 0;
+      max-width:980px;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    input{
+      background:#1a1a1a;
+      border:1px solid #333;
+      color:#fff;
+      border-radius:10px;
+      padding:10px 12px;
+      min-width:240px;
+      outline:none;
+    }
+    input:focus{ border-color:#555; }
+
+    .btn{
+      border:none;
+      border-radius:10px;
+      padding:10px 14px;
+      font-weight:900;
+      cursor:pointer;
+      background:var(--accent);
+      color:#fff;
+      transition:.15s;
+      letter-spacing:.3px;
+    }
+    .btn:hover{ opacity:.95; transform:translateY(-1px); }
+    .btn:active{ transform:translateY(0px); }
+    .btn.dark{ background:#2a2a2a; }
+    .btn.danger{ background:var(--danger); }
+
+    .notice{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:8px;
+      line-height:1.35;
+    }
+
+    /* JOB GRID */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      max-width:980px;
+    }
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+    .item{
+      background:var(--panel2);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .item .name{ font-weight:900; }
+    .item .small{ font-size:12px; color:var(--muted); margin-top:4px; }
+    .item .actions{ display:flex; gap:10px; align-items:center; }
+    .qty{
+      min-width:32px;
+      text-align:center;
+      font-weight:900;
+      color:#9ef7d5;
+    }
+
+    /* KPIs */
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      gap:10px;
+      max-width:980px;
+    }
+    @media (max-width: 860px){
+      .kpis{ grid-template-columns: 1fr; }
+    }
+    .kpi{
+      background:#0f0f0f;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+    }
+    .kpi .label{ font-size:12px; color:var(--muted); }
+    .kpi .val{ font-size:18px; font-weight:900; margin-top:4px; }
+
+    /* TABLES */
+    table{
+      width:min(980px,100%);
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+    }
+    th,td{
+      border:1px solid #303030;
+      padding:8px;
+      text-align:center;
+    }
+    th{
+      background:#0f0f0f;
+      color:#ff7b78;
+      font-weight:900;
+    }
+    td{ background:#0c0c0c; }
+
+    /* TOAST */
+    .toast{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      background:#1d1d1d;
+      border:1px solid #333;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:14px;
+      opacity:0;
+      transform:translateY(8px);
+      transition:.18s;
+      z-index:9999;
+      max-width: 90vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .toast.show{ opacity:1; transform:none; }
+  </style>
 </head>
 
 <body>
-
-<header>
-  <img src="assets/logo.png" class="logo">
-  <div class="title">MANDRILOS MECHANIC</div>
-</header>
-
-<div class="tabs">
-  <div class="tab active" onclick="openTab('mechanic')">Mehaničar</div>
-  <div class="tab" onclick="openTab('public')">Statistika</div>
-  <div class="tab" onclick="openTab('nitro')">Nitro</div>
-  <div class="tab" onclick="openTab('admin')">Admin</div>
-</div>
-
-<div id="mechanic" class="section active">
-  <h2>Mehaničar</h2>
-  <input id="mechName" placeholder="Unesi ime">
-  <button onclick="loginMechanic()">UĐI</button>
-
-  <div class="items" style="margin-top:20px">
-    <div class="item">Full tune <button onclick="addJob('full')">+1</button></div>
-    <div class="item">Custom sound <button onclick="addJob('sound')">+1</button></div>
-  </div>
-
-  <div style="margin-top:15px">
-    UKUPNO ZA MUŠTERIJU: <b id="custTotal">0$</b>
-  </div>
-</div>
-
-<div id="public" class="section">
-  <h2>Javna statistika</h2>
-  <table class="table" id="publicTable">
-    <thead>
-      <tr><th>Ime</th><th>Full</th><th>Sound</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
-
-<div id="nitro" class="section">
-  <h2>Nitro</h2>
-  <table class="table" id="nitroTable">
-    <thead>
-      <tr><th>Ime</th><th>Nitro</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
-
-<div id="admin" class="section">
-  <input type="password" id="adminPin" placeholder="PIN">
-  <button onclick="unlockAdmin()">OTKLJUČAJ</button>
-
-  <div id="adminPanel" style="display:none">
-    <div class="box">
-      <h3>Nitro – Admin</h3>
-      <button onclick="exportNitroCSV()">Export CSV</button>
-      <button onclick="resetNitro()">Reset Nitro</button>
+  <header>
+    <img src="assets/logo.png" class="logo" alt="Mandrilos Logo">
+    <div class="brand">
+      <div class="title">MANDRILOS MECHANIC</div>
+      <div class="sub">Control Panel</div>
     </div>
-  </div>
-</div>
+  </header>
 
-<script>
-// FIREBASE
-firebase.initializeApp({
-  apiKey:"AIzaSyAbxxQyWyf9iAT_AE9b-o41BRqcrnXaNy8",
-  authDomain:"nitro-55cdd.firebaseapp.com",
-  databaseURL:"https://nitro-55cdd-default-rtdb.firebaseio.com",
-  projectId:"nitro-55cdd"
-});
-const db=firebase.database();
-
-// GLOBAL
-let mech="";
-let adminUnlocked=false;
-const PRICES={full:100000,sound:200000};
-
-// TABS
-function openTab(id){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-// LOGIN
-function loginMechanic(){
-  mech=document.getElementById('mechName').value.trim();
-  if(!mech) return alert("Ime?");
-  ensureNitroRow(mech);
-}
-
-// JOBS
-let cart={};
-function addJob(k){
-  cart[k]=(cart[k]||0)+1;
-  db.ref("jobs").push({mechanic:mech,item:k,customer:PRICES[k],time:Date.now()});
-  if(k==="full"||k==="sound"){
-    db.ref("publicStats/"+mech+"/"+k).transaction(v=>(v||0)+1);
-  }
-  renderTotal();
-}
-function renderTotal(){
-  let t=0;
-  Object.keys(cart).forEach(k=>t+=PRICES[k]*cart[k]);
-  custTotal.innerText=t+"$";
-}
-
-// PUBLIC
-db.ref("publicStats").on("value",s=>{
-  const tb=publicTable.querySelector("tbody");
-  tb.innerHTML="";
-  s.forEach(m=>{
-    const v=m.val()||{};
-    tb.innerHTML+=`<tr><td>${m.key}</td><td>${v.full||0}</td><td>${v.sound||0}</td></tr>`;
-  });
-});
-
-// NITRO
-const nitroRef=db.ref("nitro");
-function ensureNitroRow(n){
-  nitroRef.child(n).once("value").then(s=>{
-    if(!s.exists()) nitroRef.child(n).set({nitro:0});
-  });
-}
-nitroRef.on("value",s=>{
-  const tb=nitroTable.querySelector("tbody");
-  tb.innerHTML="";
-  s.forEach(m=>{
-    const v=m.val();
-    tb.innerHTML+=`<tr><td>${m.key}</td><td>${v.nitro||0}</td></tr>`;
-  });
-});
-
-// ADMIN
-function unlockAdmin(){
-  if(adminPin.value==="2468"){
-    adminUnlocked=true;
-    adminPanel.style.display="block";
-  }else alert("PIN pogrešan");
-}
-function exportNitroCSV(){
-  if(!adminUnlocked) return;
-  nitroRef.once("value").then(s=>{
-    let csv="name,nitro\n";
-    s.forEach(m=>csv+=`${m.key},${m.val().nitro||0}\n`);
-    download("nitro.csv",csv);
-  });
-}
-function resetNitro(){
-  if(!adminUnlocked) return;
-  if(confirm("Reset?")) nitroRef.remove();
-}
-function download(n,t){
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([t]));
-  a.download=n;a.click();
-}
-</script>
-
-</body>
-</html>
-.logo{
-  height:55px;
-}
-.title{
-  font-size:20px;
-  font-weight:bold;
-  letter-spacing:2px;
-}
-.tabs{
-  display:flex;
-  gap:10px;
-  padding:15px;
-  background:#0f0f0f;
-}
-.tab{
-  padding:10px 18px;
-  cursor:pointer;
-  background:#1a1a1a;
-  border:1px solid #333;
-  border-radius:6px;
-  transition:.2s;
-}
-.tab:hover{background:#222}
-.tab.active{
-  background:#e53935;
-  border-color:#e53935;
-}
-.section{
-  display:none;
-  padding:25px;
-  animation:fade .3s ease;
-}
-.section.active{display:block}
-
-@keyframes fade{
-  from{opacity:0;transform:translateY(5px)}
-  to{opacity:1;transform:none}
-}
-
-.box{
-  background:#121212;
-  border:1px solid #2a2a2a;
-  padding:20px;
-  max-width:420px;
-}
-input{
-  width:100%;
-  padding:10px;
-  background:#1c1c1c;
-  border:1px solid #333;
-  color:#fff;
-  margin-top:10px;
-}
-button{
-  margin-top:12px;
-  padding:10px;
-  width:100%;
-  background:#e53935;
-  border:none;
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-}
-button:hover{opacity:.9}
-.notice{
-  margin-top:10px;
-  font-size:14px;
-  color:#aaa;
-}
-.admin-lock{
-  max-width:300px;
-.items{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:520px}
-.item{
-  display:flex;justify-content:space-between;align-items:center;
-  background:#161616;border:1px solid #2a2a2a;border-radius:6px;padding:10px
-}
-.item button{width:auto;padding:6px 10px}
-.kpi{margin-top:15px}
-.kpi b{font-size:18px}
-.table{border-collapse:collapse;margin-top:15px}
-.table th,.table td{border:1px solid #333;padding:8px;text-align:center}
-.toast{position:fixed;right:20px;bottom:20px;background:#222;border:1px solid #444;
-  padding:10px 14px;border-radius:6px;opacity:0;transition:.2s}
-.toast.show{opacity:1}
-.hidden{display:none}
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <!-- LOGO -->
-  <img src="C:\assets/logo.png" class="logo" alt="Mandrilos Logo">
-  <div class="title">MANDRILOS MECHANIC</div>
-</header>
-
-<!-- TABOVI -->
-<div class="tabs">
-  <div class="tab active" onclick="openTab('customer')">Customer</div>
-  <div class="tab" onclick="openTab('mechanic')">Mehaničar</div>
-  <div class="tab" onclick="openTab('public')">Statistika</div>
-  <div class="tab" onclick="openTab('nitro')">Nitro</div>
-  <div class="tab" onclick="openTab('admin')">Admin</div>
-</div>
-
-<!-- CUSTOMER -->
-<div id="customer" class="section active">
-  <h2>Račun za mušteriju</h2>
-  <p>Ovde će se prikazivati samo konačna cena (bez interne računice).</p>
-</div>
-
-<!-- MEHANIČAR -->
-<div class="items">
-  <div class="item">Full tune (Kompletan tuning) <button onclick="addJob('full')">+1</button></div>
-  <div class="item">Custom sound (Poseban zvuk) <button onclick="addJob('sound')">+1</button></div>
-
-  <div class="item">Window tint (Zatamnjivanje) <button onclick="addJob('tint')">+1</button></div>
-  <div class="item">Paint (Farbanje) <button onclick="addJob('paint')">+1</button></div>
-  <div class="item">Wheels stance (Širina točkova) <button onclick="addJob('stance')">+1</button></div>
-  <div class="item">Wheel size (Veličina točka) <button onclick="addJob('wsize')">+1</button></div>
-  <div class="item">Wheel width (Širina felne) <button onclick="addJob('wwidth')">+1</button></div>
-  <div class="item">Rims (Felne) <button onclick="addJob('rims')">+1</button></div>
-  <div class="item">Drift tires (Drift gume) <button onclick="addJob('drift')">+1</button></div>
-  <div class="item">Xenon (Xenon svetla) <button onclick="addJob('xenon')">+1</button></div>
-  <div class="item">Neons (Neoni) <button onclick="addJob('neon')">+1</button></div>
-  <div class="item">Horn (Sirena) <button onclick="addJob('horn')">+1</button></div>
-  <div class="item">Armor (Oklop) <button onclick="addJob('armor')">+1</button></div>
-  <div class="item">Wash (Pranje) <button onclick="addJob('wash')">+1</button></div>
-  <div class="item">Repair (Popravka) <button onclick="addJob('repair')">+1</button></div>
-  <div class="item">Tracker (Lokator) <button onclick="addJob('tracker')">+1</button></div>
-</div>
-
-<div class="kpi">
-  <div>UKUPNO ZA MUŠTERIJU: <b id="custTotal">0$</b></div>
-</div>
-<div class="kpi" style="margin-top:12px;border-top:1px solid #2a2a2a;padding-top:12px">
-  <div>MOJE NAPLAĆENO: <b id="meNaplatio">0$</b></div>
-  <div>MOJA ZARADA: <b id="meZarada">0$</b></div>
-  <div>ZA BANKU (FIRMA): <b id="meBanka">0$</b></div>
-  <div class="notice" style="margin-top:8px">
-    Full tune & Custom sound: bonus 10% se računa na kraju nedelje (admin).
-  </div>
-</div>
-
-<!-- PUBLIC -->
-<div id="public" class="section">
-  <h2>Javna statistika</h2>
-  <p>Svi vide koliko je ko uradio Full tune i Custom sound.</p>
-  <table class="table" id="publicTable">
-  <thead><tr><th>Mehaničar</th><th>Full tune</th><th>Custom sound</th></tr></thead>
-  <tbody></tbody>
-</table>
-</div>
-
-<!-- NITRO -->
-<div id="nitro" class="section">
-  <h2>Nitro & Materijali</h2>
-  <p>Live tracker – bez resetovanja dok admin ne exportuje.</p>
-  <table class="table" id="nitroTable">
-  <thead>
-    <tr>
-      <th>Ime</th>
-      <th>Nitro</th>
-      <th>Guma (Tire)</th>
-      <th>Aluminijum (Aluminum)</th>
-      <th>Čelik (Steel)</th>
-      <th>Skarp (Scrap)</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<div class="notice" style="margin-top:10px">
-  Unos je live. Nema resetovanja dok admin ne exportuje.
-</div>
-
-</div>
-
-<!-- ADMIN -->
-<div id="admin" class="section">
-  <div class="box admin-lock" id="adminLock">
-    <h3>Admin pristup</h3>
-    <input type="password" id="adminPin" placeholder="Unesi PIN">
-    <button onclick="unlockAdmin()">OTKLJUČAJ</button>
+  <div class="tabs">
+    <button class="tab active" data-target="customer">Customer</button>
+    <button class="tab" data-target="mechanic">Mehaničar</button>
+    <button class="tab" data-target="public">Statistika</button>
+    <button class="tab" data-target="nitro">Nitro</button>
+    <button class="tab" data-target="admin">Admin</button>
   </div>
 
-  <div id="adminPanel" style="display:none">
-    <h2>ADMIN PANEL</h2>
-    <div class="box" style="max-width:500px">
-  <h3>Dodaj mehaničara</h3>
-  <input id="newMech" placeholder="Ime mehaničara">
-  <button onclick="addMechanic()">DODAJ</button>
-</div>
+  <div class="wrap">
 
-<h3 style="margin-top:30px">Lista mehaničara</h3>
-<table class="table" id="mechTable">
-  <thead>
-    <tr>
-      <th>Ime</th>
-      <th>Status</th>
-      <th>Akcija</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+    <!-- CUSTOMER -->
+    <section id="customer" class="section active">
+      <h2>Račun za mušteriju</h2>
+      <div class="box">
+        <div class="notice">Mušterija vidi samo stavke + konačnu cenu. Ne vidi interne troškove.</div>
+        <div id="customerList" class="notice" style="margin-top:10px"></div>
 
-<h3 style="margin-top:30px">Admin pregled (live)</h3>
-<p>Ovde admin vidi kompletnu računicu (FAZA 4).</p>
+        <div class="kpis" style="margin-top:12px">
+          <div class="kpi">
+            <div class="label">UKUPNO</div>
+            <div class="val" id="custTotal">0$</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MECHANIC -->
+    <section id="mechanic" class="section">
+      <h2>Mehaničar</h2>
+
+      <div class="box">
+        <div class="row">
+          <input id="mechName" placeholder="Unesi svoje ime (npr. Marković)">
+          <button class="btn" id="btnLogin">UĐI</button>
+          <button class="btn dark" id="btnLogout">ODJAVA</button>
+        </div>
+        <div class="notice">Ulogovan: <b id="mechLabel">—</b></div>
+        <div class="notice">Mehaničar vidi samo svoje: naplaćeno / zarada / za banku.</div>
+      </div>
+
+      <div class="box">
+        <h3>Dodaj posao (+1)</h3>
+        <div id="jobGrid" class="grid"></div>
+      </div>
+
+      <div class="box">
+        <h3>Moja računica</h3>
+        <div class="kpis">
+          <div class="kpi"><div class="label">MOJE NAPLAĆENO</div><div class="val" id="meNaplatio">0$</div></div>
+          <div class="kpi"><div class="label">MOJA ZARADA</div><div class="val" id="meZarada">0$</div></div>
+          <div class="kpi"><div class="label">ZA BANKU (FIRMA)</div><div class="val" id="meBanka">0$</div></div>
+        </div>
+        <div class="notice">Full tune & Custom sound: bonus 10% se računa na kraju nedelje (admin).</div>
+      </div>
+    </section>
+
+    <!-- PUBLIC -->
+    <section id="public" class="section">
+      <h2>Javna statistika (svi vide)</h2>
+      <div class="box">
+        <table>
+          <thead><tr><th>Mehaničar</th><th>Full tune</th><th>Custom sound</th></tr></thead>
+          <tbody id="publicBody"></tbody>
+        </table>
+        <div class="notice">Ovo je samo broj urađenih Full/Sound po imenu.</div>
+      </div>
+    </section>
+
+    <!-- NITRO -->
+    <section id="nitro" class="section">
+      <h2>Nitro & Materijali (live)</h2>
+      <div class="box">
+        <div class="notice">Samo svoj red možeš da menjaš. Ostalo je read-only.</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Ime</th><th>Nitro</th><th>Guma (Tire)</th><th>Aluminijum (Aluminum)</th><th>Čelik (Steel)</th><th>Skarp (Scrap)</th>
+            </tr>
+          </thead>
+          <tbody id="nitroBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="admin" class="section">
+      <h2>Admin</h2>
+
+      <div class="box" id="adminLock">
+        <div class="row">
+          <input type="password" id="adminPin" placeholder="PIN (2468)">
+          <button class="btn" id="btnAdminUnlock">OTKLJUČAJ</button>
+        </div>
+        <div class="notice">Samo admin ima export/reset i upravljanje mehaničarima.</div>
+      </div>
+
+      <div id="adminPanel" style="display:none">
+        <div class="box">
+          <h3>Dodaj mehaničara</h3>
+          <div class="row">
+            <input id="newMech" placeholder="Novo ime">
+            <button class="btn" id="btnAddMech">DODAJ</button>
+          </div>
+
+          <h3 style="margin-top:14px">Lista mehaničara</h3>
+          <table>
+            <thead><tr><th>Ime</th><th>Status</th><th>Akcija</th></tr></thead>
+            <tbody id="mechBody"></tbody>
+          </table>
+        </div>
+
+        <div class="box">
+          <h3>Nitro – Admin</h3>
+          <div class="row">
+            <button class="btn" id="btnNitroCSV">📤 Export Nitro CSV</button>
+            <button class="btn" id="btnNitroTXT">📤 Export Nitro TXT</button>
+            <button class="btn danger" id="btnNitroReset">🔄 Reset Nitro</button>
+          </div>
+          <div class="notice">Reset briše samo Nitro podatke.</div>
+        </div>
+
+        <div class="box">
+          <h3>Nedeljni bonus 10% (Full + Sound)</h3>
+          <button class="btn" id="btnWeekly">🧮 Izračunaj</button>
+          <div id="weeklyResult" class="notice" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </section>
+
   </div>
-  <div class="box" style="max-width:700px;margin-top:20px">
-  <h3>Nitro – Admin</h3>
-  <button onclick="exportNitroCSV()">📤 Export Nitro CSV</button>
-  <button onclick="exportNitroTXT()">📤 Export Nitro TXT</button>
-  <button onclick="resetNitro()" style="background:#b71c1c">🔄 Reset Nitro</button>
-  <div class="notice">Reset briše samo Nitro podatke.</div>
-</div>
 
-// ===== ADMIN – MEHANIČARI =====
-const mechRef = db.ref("mechanics");
+  <div id="toast" class="toast"></div>
 
-// Dodaj mehaničara
-function addMechanic(){
-  const name = document.getElementById("newMech").value.trim();
-  if(!name) return alert("Unesi ime");
-  mechRef.child(name).set({ active:true });
-  document.getElementById("newMech").value="";
-}
+  <script>
+    /* ===================== FIREBASE INIT ===================== */
+    firebase.initializeApp({
+      apiKey: "AIzaSyAbxxQyWyf9iAT_AE9b-o41BRqcrnXaNy8",
+      authDomain: "nitro-55cdd.firebaseapp.com",
+      databaseURL: "https://nitro-55cdd-default-rtdb.firebaseio.com",
+      projectId: "nitro-55cdd",
+      storageBucket: "nitro-55cdd.appspot.com",
+      messagingSenderId: "365206404307",
+      appId: "1:365206404307:web:794d0420e125760a572826"
+    });
+    const db = firebase.database();
 
-// Učitaj listu mehaničara
-mechRef.on("value", snap=>{
-  const tbody = document.querySelector("#mechTable tbody");
-  tbody.innerHTML="";
-  snap.forEach(m=>{
-    const data = m.val();
-    tbody.innerHTML += `
-      <tr>
-        <td>${m.key}</td>
-        <td>${data.active ? "Aktivan" : "Neaktivan"}</td>
-        <td>
-          ${data.active 
-            ? `<button onclick="deactivateMech('${m.key}')">OTKAZ</button>`
-            : `—`
-          }
-        </td>
-      </tr>
-    `;
-  });
-});
+    /* ===================== CONFIG ===================== */
+    const PRICES = {
+      full:{cust:100000}, sound:{cust:200000},
+      tint:{cust:2400, cost:1200},
+      paint:{cust:2400, cost:1200},
+      stance:{cust:50000, cost:25000},
+      wsize:{cust:50000, cost:25000},
+      wwidth:{cust:50000, cost:25000},
+      rims:{cust:6000, cost:3000},
+      drift:{cust:7500, cost:3750},
+      xenon:{cust:6000, cost:3000},
+      neon:{cust:20000, cost:10000},
+      horn:{cust:1500, cost:750},
+      armor:{cust:9000, cost:4500},
+      wash:{cust:1000, cost:500},
+      repair:{cust:4000, cost:2000},
+      tracker:{cust:2400, cost:1200}
+    };
 
-// Deaktiviraj mehaničara (otkaz)
-function deactivateMech(name){
-  if(!confirm("Sigurno želiš da deaktiviraš "+name+"?")) return;
-  mechRef.child(name).update({ active:false });
-}// ===== NITRO TRACKER =====
-const nitroRef = db.ref("nitro");
+    const JOBS_UI = [
+      {k:"full",  title:"Full tune", sub:"Kompletan tuning"},
+      {k:"sound", title:"Custom sound", sub:"Poseban zvuk"},
+      {k:"tint",  title:"Window tint", sub:"Zatamnjivanje"},
+      {k:"paint", title:"Paint", sub:"Farbanje"},
+      {k:"stance",title:"Wheels stance", sub:"Stance"},
+      {k:"wsize", title:"Wheel size", sub:"Veličina točka"},
+      {k:"wwidth",title:"Wheel width", sub:"Širina felne"},
+      {k:"rims",  title:"Rims", sub:"Felne"},
+      {k:"drift", title:"Drift tires", sub:"Drift gume"},
+      {k:"xenon", title:"Xenon", sub:"Xenon svetla"},
+      {k:"neon",  title:"Neons", sub:"Neoni"},
+      {k:"horn",  title:"Horn", sub:"Sirena"},
+      {k:"armor", title:"Armor", sub:"Oklop"},
+      {k:"wash",  title:"Wash", sub:"Pranje"},
+      {k:"repair",title:"Repair", sub:"Popravka"},
+      {k:"tracker",title:"Tracker", sub:"Lokator"}
+    ];
 
-// init row for mechanic if missing
-function ensureNitroRow(name){
-  nitroRef.child(name).once("value").then(s=>{
-    if(!s.exists()){
-      nitroRef.child(name).set({
-        nitro:0, tire:0, aluminum:0, steel:0, scrap:0
+    /* ===================== STATE ===================== */
+    let mech = localStorage.getItem("mechanic") || "";
+    let adminUnlocked = false;
+    let cart = {}; // customer view current session
+
+    const $ = (id)=>document.getElementById(id);
+    const money = (n)=>(Number(n)||0).toLocaleString()+"$";
+
+    function toast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(()=>t.classList.remove("show"), 1200);
+    }
+
+    /* ===================== TABS ===================== */
+    function setTab(targetId){
+      document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+      document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+      document.querySelector(`.tab[data-target="${targetId}"]`)?.classList.add("active");
+      $(targetId)?.classList.add("active");
+    }
+
+    /* ===================== LABELS ===================== */
+    function labelItem(k){
+      const map = {
+        full:"Full tune (Kompletan tuning)",
+        sound:"Custom sound (Poseban zvuk)",
+        tint:"Window tint (Zatamnjivanje)",
+        paint:"Paint (Farbanje)",
+        stance:"Wheels stance (Stance)",
+        wsize:"Wheel size (Veličina točka)",
+        wwidth:"Wheel width (Širina felne)",
+        rims:"Rims (Felne)",
+        drift:"Drift tires (Drift gume)",
+        xenon:"Xenon (Xenon svetla)",
+        neon:"Neons (Neoni)",
+        horn:"Horn (Sirena)",
+        armor:"Armor (Oklop)",
+        wash:"Wash (Pranje)",
+        repair:"Repair (Popravka)",
+        tracker:"Tracker (Lokator)"
+      };
+      return map[k] || k;
+    }
+
+    /* ===================== CUSTOMER ===================== */
+    function renderCustomer(){
+      let total = 0;
+      let lines = [];
+      Object.keys(cart).forEach(k=>{
+        const qty = cart[k]||0;
+        if(!qty) return;
+        const price = PRICES[k].cust * qty;
+        total += price;
+        lines.push(`${labelItem(k)} x${qty} → ${money(price)}`);
+      });
+      $("customerList").innerHTML = lines.length ? lines.join("<br>") : "Nema unosa još.";
+      $("custTotal").textContent = money(total);
+    }
+
+    /* ===================== MECH STATS ===================== */
+    function computeForMechanic(entries){
+      let naplatio=0, banka=0, zarada=0;
+      entries.forEach(e=>{
+        naplatio += e.customer||0;
+        const item = e.item;
+        if(item==="full") banka += 100000;
+        else if(item==="sound") banka += 200000;
+        else{
+          const cost = PRICES[item]?.cost || 0;
+          banka += cost;
+          zarada += ((e.customer||0) - cost);
+        }
+      });
+      return {naplatio,banka,zarada};
+    }
+
+    function bindMyStats(){
+      if(!mech) return;
+      db.ref("jobs").orderByChild("mechanic").equalTo(mech).on("value", snap=>{
+        const entries=[];
+        snap.forEach(s=>entries.push(s.val()));
+        const r = computeForMechanic(entries);
+        $("meNaplatio").textContent = money(r.naplatio);
+        $("meBanka").textContent   = money(r.banka);
+        $("meZarada").textContent  = money(r.zarada);
       });
     }
-  });
-}
 
-// bind table live
-nitroRef.on("value", snap=>{
-  const tb = document.querySelector("#nitroTable tbody");
-  tb.innerHTML = "";
-  snap.forEach(m=>{
-    const d = m.val() || {};
-    tb.innerHTML += `
-      <tr>
-        <td>${m.key}</td>
-        ${nitroCell(m.key,'nitro',d.nitro)}
-        ${nitroCell(m.key,'tire',d.tire)}
-        ${nitroCell(m.key,'aluminum',d.aluminum)}
-        ${nitroCell(m.key,'steel',d.steel)}
-        ${nitroCell(m.key,'scrap',d.scrap)}
-      </tr>
-    `;
-  });
-});
-
-// editable cell (only for logged mechanic)
-function nitroCell(name, key, val){
-  const canEdit = (name === mech);
-  if(!canEdit){
-    return `<td>${val||0}</td>`;
-  }
-  return `
-    <td>
-      <input style="width:70px"
-        type="number" min="0" value="${val||0}"
-        onchange="updateNitro('${name}','${key}',this.value)">
-    </td>`;
-}
-
-function updateNitro(name, key, value){
-  const v = Math.max(0, Number(value)||0);
-  nitroRef.child(name).child(key).set(v);
-}
-// ===== ADMIN: NITRO EXPORT / RESET =====
-function exportNitroCSV(){
-  if(!adminUnlocked) return alert("Admin samo");
-  db.ref("nitro").once("value").then(snap=>{
-    let csv="mechanic,nitro,tire,aluminum,steel,scrap\n";
-    snap.forEach(s=>{
-      const d=s.val()||{};
-      csv += `${s.key},${d.nitro||0},${d.tire||0},${d.aluminum||0},${d.steel||0},${d.scrap||0}\n`;
+    /* ===================== PUBLIC ===================== */
+    db.ref("publicStats").on("value", snap=>{
+      const tb = $("publicBody");
+      tb.innerHTML = "";
+      snap.forEach(m=>{
+        const v=m.val()||{};
+        tb.innerHTML += `<tr><td>${m.key}</td><td>${v.full||0}</td><td>${v.sound||0}</td></tr>`;
+      });
     });
-    downloadFile("nitro.csv", csv, "text/csv");
-  });
-}
 
-function exportNitroTXT(){
-  if(!adminUnlocked) return alert("Admin samo");
-  db.ref("nitro").once("value").then(snap=>{
-    let txt="NITRO LISTING\n\n";
-    snap.forEach(s=>{
-      const d=s.val()||{};
-      txt += `${s.key}: NITRO ${d.nitro||0}, TIRE ${d.tire||0}, ALU ${d.aluminum||0}, STEEL ${d.steel||0}, SCRAP ${d.scrap||0}\n`;
+    /* ===================== NITRO ===================== */
+    const nitroRef = db.ref("nitro");
+
+    function ensureNitroRow(name){
+      if(!name) return;
+      nitroRef.child(name).once("value").then(s=>{
+        if(!s.exists()){
+          nitroRef.child(name).set({nitro:0,tire:0,aluminum:0,steel:0,scrap:0});
+        }
+      });
+    }
+
+    function updateNitro(name, key, value){
+      const v = Math.max(0, Number(value)||0);
+      nitroRef.child(name).child(key).set(v);
+    }
+
+    nitroRef.on("value", snap=>{
+      const tb = $("nitroBody");
+      tb.innerHTML = "";
+      snap.forEach(m=>{
+        const d = m.val()||{};
+        const canEdit = (m.key === mech);
+        const cell = (key,val)=>{
+          if(!canEdit) return `<td>${val||0}</td>`;
+          return `<td><input data-nname="${m.key}" data-nkey="${key}" type="number" min="0" value="${val||0}" style="min-width:90px"></td>`;
+        };
+        tb.innerHTML += `
+          <tr>
+            <td>${m.key}</td>
+            ${cell("nitro",d.nitro)}
+            ${cell("tire",d.tire)}
+            ${cell("aluminum",d.aluminum)}
+            ${cell("steel",d.steel)}
+            ${cell("scrap",d.scrap)}
+          </tr>
+        `;
+      });
+      tb.querySelectorAll("input[data-nname]").forEach(inp=>{
+        inp.addEventListener("change", ()=>{
+          updateNitro(inp.dataset.nname, inp.dataset.nkey, inp.value);
+        });
+      });
     });
-    downloadFile("nitro.txt", txt, "text/plain");
-  });
-}
 
-function resetNitro(){
-  if(!adminUnlocked) return alert("Admin samo");
-  if(!confirm("SIGURNO? Ovo briše sve Nitro podatke!")) return;
-  db.ref("nitro").remove();
-  alert("Nitro resetovan.");
-}
+    /* ===================== ADMIN MECHANICS ===================== */
+    const mechRef = db.ref("mechanics");
 
-<script>
-function openTab(id){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelector(`[onclick="openTab('${id}')"]`).classList.add('active');
-  document.getElementById(id).classList.add('active');
-}
+    function addMechanic(){
+      if(!adminUnlocked) return alert("Admin samo");
+      const name = $("newMech").value.trim();
+      if(!name) return alert("Unesi ime");
+      mechRef.child(name).set({active:true});
+      $("newMech").value="";
+      toast("Dodat mehaničar");
+    }
 
-function loginMechanic(){
-  const name=document.getElementById('mechName').value.trim();
-  if(!name) return alert("Unesi ime");
-  localStorage.setItem("mechanic",name);
-  document.getElementById("mechLabel").innerText=name;
-  document.getElementById("mechPanel").style.display="block";
-  mech = name;
-bindMyStats();
-ensureNitroRow(mech);
+    function deactivateMech(name){
+      if(!adminUnlocked) return;
+      if(!confirm("Sigurno otkaz za "+name+"?")) return;
+      mechRef.child(name).update({active:false});
+      toast("Deaktiviran");
+    }
 
-
-}
-
-function unlockAdmin(){
-  const pin=document.getElementById("adminPin").value;
-  if(pin==="2468"){
-    document.getElementById("adminLock").style.display="none";
-    document.getElementById("adminPanel").style.display="block";
-  }else{
-    alert("Pogrešan PIN");
-  }
-}// ===== ADMIN: LISTING + EXPORT + RESET =====
-let adminUnlocked = false;
-
-// dopuna postojeće unlockAdmin()
-const _oldUnlock = unlockAdmin;
-unlockAdmin = function(){
-  const pin=document.getElementById("adminPin").value;
-  if(pin==="2468"){
-    adminUnlocked = true;
-    document.getElementById("adminLock").style.display="none";
-    document.getElementById("adminPanel").style.display="block";
-    bindAdminListing();
-  }else{
-    alert("Pogrešan PIN");
-  }
-};
-
-function bindAdminListing(){
-  if(!adminUnlocked) return;
-  db.ref("jobs").limitToLast(300).on("value", snap=>{
-    const tbody=document.querySelector("#jobsTable tbody");
-    tbody.innerHTML="";
-    snap.forEach(s=>{
-      const d=s.val();
-      const t = new Date(d.time||0).toLocaleString();
-      tbody.innerHTML += `
-        <tr>
-          <td>${t}</td>
-          <td>${d.mechanic||""}</td>
-          <td>${labelItem(d.item)}</td>
-          <td>${(d.customer||0).toLocaleString()}$</td>
-        </tr>
-      `;
+    mechRef.on("value", snap=>{
+      const tb = $("mechBody");
+      if(!tb) return;
+      tb.innerHTML = "";
+      snap.forEach(m=>{
+        const d=m.val()||{};
+        tb.innerHTML += `
+          <tr>
+            <td>${m.key}</td>
+            <td>${d.active ? "Aktivan" : "Neaktivan"}</td>
+            <td>${d.active ? `<button class="btn danger" data-fire="${m.key}">OTKAZ</button>` : "—"}</td>
+          </tr>
+        `;
+      });
+      tb.querySelectorAll("button[data-fire]").forEach(b=>{
+        b.addEventListener("click", ()=>deactivateMech(b.dataset.fire));
+      });
     });
-  });
-}
 
-function labelItem(k){
-  const map = {
-    full:"Kompletan tuning (Full tune)",
-    sound:"Poseban zvuk (Custom sound)",
-    tint:"Zatamnjivanje (Window tint)",
-    paint:"Farbanje (Paint)",
-    stance:"Širina točkova (Wheels stance)",
-    wsize:"Veličina točka (Wheel size)",
-    wwidth:"Širina felne (Wheel width)",
-    rims:"Felne (Rims)",
-    drift:"Drift gume (Drift tires)",
-    xenon:"Xenon (Xenon)",
-    neon:"Neoni (Neons)",
-    horn:"Sirena (Horn)",
-    armor:"Oklop (Armor)",
-    wash:"Pranje (Wash)",
-    repair:"Popravka (Repair)",
-    tracker:"Lokator (Tracker)"
-  };
-  return map[k] || k;
-}
+    /* ===================== ADMIN EXPORT/RESET NITRO ===================== */
+    function downloadFile(filename, content, type){
+      const blob = new Blob([content], {type});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href=url; a.download=filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
 
-function exportCSV(){
-  if(!adminUnlocked) return alert("Admin samo");
-  db.ref("jobs").once("value").then(snap=>{
-    let csv="time,mechanic,item,customer\n";
-    snap.forEach(s=>{
-      const d=s.val();
-      csv += `${new Date(d.time||0).toISOString()},${d.mechanic||""},"${labelItem(d.item)}",${d.customer||0}\n`;
+    function exportNitroCSV(){
+      if(!adminUnlocked) return alert("Admin samo");
+      db.ref("nitro").once("value").then(snap=>{
+        let csv="mechanic,nitro,tire,aluminum,steel,scrap\n";
+        snap.forEach(s=>{
+          const d=s.val()||{};
+          csv += `${s.key},${d.nitro||0},${d.tire||0},${d.aluminum||0},${d.steel||0},${d.scrap||0}\n`;
+        });
+        downloadFile("nitro.csv", csv, "text/csv");
+      });
+    }
+
+    function exportNitroTXT(){
+      if(!adminUnlocked) return alert("Admin samo");
+      db.ref("nitro").once("value").then(snap=>{
+        let txt="NITRO LISTING\n\n";
+        snap.forEach(s=>{
+          const d=s.val()||{};
+          txt += `${s.key}: NITRO ${d.nitro||0}, TIRE ${d.tire||0}, ALU ${d.aluminum||0}, STEEL ${d.steel||0}, SCRAP ${d.scrap||0}\n`;
+        });
+        downloadFile("nitro.txt", txt, "text/plain");
+      });
+    }
+
+    function resetNitro(){
+      if(!adminUnlocked) return alert("Admin samo");
+      if(!confirm("SIGURNO? Ovo briše sve Nitro podatke!")) return;
+      db.ref("nitro").remove();
+      toast("Nitro resetovan");
+    }
+
+    /* ===================== WEEKLY BONUS ===================== */
+    function computeWeeklyBonus(){
+      if(!adminUnlocked) return alert("Admin samo");
+      db.ref("jobs").once("value").then(snap=>{
+        const perMech = {};
+        let firmProfit = 0;
+        snap.forEach(s=>{
+          const d=s.val();
+          if(d.item === "full"){
+            firmProfit += 65000;
+            perMech[d.mechanic] = (perMech[d.mechanic]||0) + 65000;
+          }
+          if(d.item === "sound"){
+            firmProfit += 50000;
+            perMech[d.mechanic] = (perMech[d.mechanic]||0) + 50000;
+          }
+        });
+
+        let html = `<b>Zarada firme (Full+Sound):</b> ${money(firmProfit)}<br><br>`;
+        html += `<b>Bonusi (10%):</b><br>`;
+        Object.keys(perMech).forEach(m=>{
+          const bonus = Math.round(perMech[m] * 0.10);
+          html += `${m}: ${money(bonus)}<br>`;
+        });
+        $("weeklyResult").innerHTML = html;
+      });
+    }
+
+    /* ===================== JOB BUTTONS ===================== */
+    function buildJobButtons(){
+      const grid = $("jobGrid");
+      grid.innerHTML = "";
+      JOBS_UI.forEach(j=>{
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div>
+            <div class="name">${j.title}</div>
+            <div class="small">${j.sub}</div>
+          </div>
+          <div class="actions">
+            <span class="qty" id="qty_${j.k}">0</span>
+            <button class="btn" data-job="${j.k}">+1</button>
+          </div>
+        `;
+        grid.appendChild(el);
+      });
+
+      grid.querySelectorAll("button[data-job]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          if(!mech){ alert("Uloguj se imenom prvo."); return; }
+          const k = b.dataset.job;
+          cart[k] = (cart[k]||0)+1;
+          $("qty_"+k).textContent = cart[k];
+
+          db.ref("jobs").push({ mechanic: mech, item: k, customer: PRICES[k].cust, time: Date.now() });
+          if(k==="full" || k==="sound"){
+            db.ref("publicStats/"+mech+"/"+k).transaction(v=>(v||0)+1);
+          }
+
+          renderCustomer();
+          toast("Dodato: "+labelItem(k));
+        });
+      });
+    }
+
+    /* ===================== AUTH ===================== */
+    function loginMechanic(){
+      const name = $("mechName").value.trim();
+      if(!name) return alert("Unesi ime");
+      mech = name;
+      localStorage.setItem("mechanic", mech);
+      $("mechLabel").textContent = mech;
+      ensureNitroRow(mech);
+      bindMyStats();
+      toast("Ulogovan: "+mech);
+    }
+
+    function logoutMechanic(){
+      mech = "";
+      localStorage.removeItem("mechanic");
+      $("mechLabel").textContent = "—";
+      toast("Odjava");
+    }
+
+    function unlockAdmin(){
+      const pin = $("adminPin").value;
+      if(pin === "2468"){
+        adminUnlocked = true;
+        $("adminLock").style.display = "none";
+        $("adminPanel").style.display = "block";
+        toast("Admin OK");
+      }else{
+        alert("Pogrešan PIN");
+      }
+    }
+
+    /* ===================== INIT ===================== */
+    document.addEventListener("DOMContentLoaded", ()=>{
+      document.querySelectorAll(".tab").forEach(b=>{
+        b.addEventListener("click", ()=>setTab(b.dataset.target));
+      });
+
+      $("btnLogin").addEventListener("click", loginMechanic);
+      $("btnLogout").addEventListener("click", logoutMechanic);
+      $("btnAdminUnlock").addEventListener("click", unlockAdmin);
+
+      $("btnAddMech").addEventListener("click", addMechanic);
+      $("btnNitroCSV").addEventListener("click", exportNitroCSV);
+      $("btnNitroTXT").addEventListener("click", exportNitroTXT);
+      $("btnNitroReset").addEventListener("click", resetNitro);
+      $("btnWeekly").addEventListener("click", computeWeeklyBonus);
+
+      buildJobButtons();
+
+      if(mech){
+        $("mechLabel").textContent = mech;
+        ensureNitroRow(mech);
+        bindMyStats();
+      }
+
+      renderCustomer();
     });
-    downloadFile("listing.csv", csv, "text/csv");
-  });
-}
-
-function exportTXT(){
-  if(!adminUnlocked) return alert("Admin samo");
-  db.ref("jobs").once("value").then(snap=>{
-    let txt="MANDRILOS LISTING\n\n";
-    snap.forEach(s=>{
-      const d=s.val();
-      txt += `${new Date(d.time||0).toLocaleString()} | ${d.mechanic} | ${labelItem(d.item)} | ${d.customer}$\n`;
-    });
-    downloadFile("listing.txt", txt, "text/plain");
-  });
-}
-
-function resetAllJobs(){
-  if(!adminUnlocked) return alert("Admin samo");
-  if(!confirm("SIGURNO? Ovo briše sve poslove i statistiku Full/Sound! Nitro ostaje.")) return;
-  db.ref("jobs").remove();
-  db.ref("publicStats").remove();
-  alert("Reset završен.");
-}
-
-function downloadFile(filename, content, type){
-  const blob = new Blob([content], {type});
-  const url = URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url; a.download=filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
-
-</script>
-
+  </script>
 </body>
 </html>
-
