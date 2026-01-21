@@ -30,7 +30,6 @@
       color:var(--text);
     }
 
-    /* HEADER full black */
     header{
       background:#000;
       border-bottom:1px solid #111;
@@ -53,7 +52,6 @@
       letter-spacing:1px;
     }
 
-    /* Tabs */
     .tabs{
       background:#0d0d0d;
       border-bottom:1px solid #1c1c1c;
@@ -168,7 +166,7 @@
 
     .kpis{
       display:grid;
-      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
       gap:10px;
       max-width:1100px;
     }
@@ -251,7 +249,7 @@
         <div class="notice">Mušterija vidi samo stavke + konačnu cenu. Ne vidi interne troškove.</div>
         <div id="customerList" class="notice" style="margin-top:10px"></div>
 
-        <div class="kpis" style="margin-top:12px">
+        <div class="kpis" style="margin-top:12px; grid-template-columns: 1fr;">
           <div class="kpi">
             <div class="label">UKUPNO</div>
             <div class="val" id="custTotal">0$</div>
@@ -274,23 +272,27 @@
         <div class="notice">Tek kad se uloguješ, pojavljuje se meni sa delovima.</div>
       </div>
 
-      <!-- MENI SA DELOVIMA (tek posle logina) -->
+      <!-- MENI SA DELOVIMA -->
       <div class="box" id="jobBox" style="display:none">
         <h3>Dodaj posao (+1)</h3>
         <div id="jobGrid" class="grid"></div>
 
         <div class="kpis" style="margin-top:12px">
           <div class="kpi">
-            <div class="label">UKUPNO ZA MUŠTERIJU (real-time)</div>
+            <div class="label">UKUPNO ZA MUŠTERIJU</div>
             <div class="val" id="custTotalMech">0$</div>
           </div>
           <div class="kpi">
-            <div class="label">BROJ STAVKI</div>
-            <div class="val" id="itemsCount">0</div>
+            <div class="label">ZA BANKU (FIRMA) – DUŽAN SI DA UPLATIŠ</div>
+            <div class="val" id="bankDue">0$</div>
           </div>
           <div class="kpi">
-            <div class="label">NAPOMENA</div>
-            <div class="val" style="font-size:14px;font-weight:800;color:#ddd">Klikni GOTOVO kad završiš</div>
+            <div class="label">MOJA ZARADA SADA</div>
+            <div class="val" id="meNowProfit">0$</div>
+          </div>
+          <div class="kpi">
+            <div class="label">BONUS PROCENA (10% Full/Sound)</div>
+            <div class="val" id="bonusEstimate">0$</div>
           </div>
         </div>
 
@@ -299,18 +301,9 @@
           <button class="btn dark" id="btnClear">🧹 Očisti</button>
         </div>
 
-        <div class="notice">“GOTOVO” šalje kompletan spisak u Admin pregled sa imenom i datumom.</div>
-      </div>
-
-      <!-- MOJA RAČUNICA (u odnosu na sve moje poslove u bazi) -->
-      <div class="box">
-        <h3>Moja računica (ukupno iz baze)</h3>
-        <div class="kpis">
-          <div class="kpi"><div class="label">MOJE NAPLAĆENO</div><div class="val" id="meNaplatio">0$</div></div>
-          <div class="kpi"><div class="label">MOJA ZARADA</div><div class="val" id="meZarada">0$</div></div>
-          <div class="kpi"><div class="label">ZA BANKU (FIRMA)</div><div class="val" id="meBanka">0$</div></div>
+        <div class="notice">
+          Full tune + Custom sound: cela naplata ide u banku, bonus 10% se obračuna na kraju nedelje (admin).
         </div>
-        <div class="notice">Full tune & Custom sound: bonus 10% se računa na kraju nedelje (admin).</div>
       </div>
     </section>
 
@@ -322,7 +315,6 @@
           <thead><tr><th>Mehaničar</th><th>Full tune</th><th>Custom sound</th></tr></thead>
           <tbody id="publicBody"></tbody>
         </table>
-        <div class="notice">Ovo je samo broj urađenih Full/Sound po imenu.</div>
       </div>
     </section>
 
@@ -351,23 +343,10 @@
           <input type="password" id="adminPin" placeholder="PIN (2468)">
           <button class="btn" id="btnAdminUnlock">OTKLJUČAJ</button>
         </div>
-        <div class="notice">Samo admin ima export/reset i upravljanje mehaničarima + pregled računa (GOTOVO).</div>
+        <div class="notice">Admin vidi “GOTOVO” račune + filter po datumima.</div>
       </div>
 
       <div id="adminPanel" style="display:none">
-        <div class="box">
-          <h3>Dodaj mehaničara</h3>
-          <div class="row">
-            <input id="newMech" placeholder="Novo ime">
-            <button class="btn" id="btnAddMech">DODAJ</button>
-          </div>
-
-          <h3 style="margin-top:14px">Lista mehaničara</h3>
-          <table>
-            <thead><tr><th>Ime</th><th>Status</th><th>Akcija</th></tr></thead>
-            <tbody id="mechBody"></tbody>
-          </table>
-        </div>
 
         <div class="box">
           <h3>Gotovo – pregledi (računi)</h3>
@@ -383,14 +362,16 @@
               <tr>
                 <th>Datum</th>
                 <th>Mehaničar</th>
-                <th>Ukupno</th>
+                <th>Mušterija</th>
+                <th>Banka</th>
+                <th>Zarada</th>
                 <th>Stavke</th>
               </tr>
             </thead>
             <tbody id="invoiceBody"></tbody>
           </table>
 
-          <div class="notice">Svaki klik “GOTOVO” pravi jedan zapis sa datumom i spiskom.</div>
+          <div class="notice">Svaki klik “GOTOVO” pravi jedan zapis sa datumom, ukupnim i internom računicom.</div>
         </div>
 
         <div class="box">
@@ -403,11 +384,6 @@
           <div class="notice">Reset briše samo Nitro podatke.</div>
         </div>
 
-        <div class="box">
-          <h3>Nedeljni bonus 10% (Full + Sound)</h3>
-          <button class="btn" id="btnWeekly">🧮 Izračunaj</button>
-          <div id="weeklyResult" class="notice" style="margin-top:10px"></div>
-        </div>
       </div>
     </section>
   </div>
@@ -427,9 +403,15 @@
     });
     const db = firebase.database();
 
-    /* ===================== CONFIG ===================== */
+    /* ===================== PRICES =====================
+      - cust: koliko plaća mušterija
+      - cost: koliko “košta firmu” (to se vraća u banku, kod duplo stavki)
+      Full/Sound: cela naplata ide u banku; bonus se računa na profitu (cust-cost)
+    */
     const PRICES = {
-      full:{cust:100000}, sound:{cust:200000},
+      full:{cust:100000, cost:35000},        // profit 65000
+      sound:{cust:200000, cost:150000},      // profit 50000
+
       tint:{cust:2400, cost:1200},
       paint:{cust:2400, cost:1200},
       stance:{cust:50000, cost:25000},
@@ -468,7 +450,7 @@
     /* ===================== STATE ===================== */
     let mech = localStorage.getItem("mechanic") || "";
     let adminUnlocked = false;
-    let cart = {}; // trenutni “račun” (pre GOTOVO)
+    let cart = {}; // trenutni “auto” (pre GOTOVO)
 
     const $ = (id)=>document.getElementById(id);
     const money = (n)=>(Number(n)||0).toLocaleString()+"$";
@@ -480,7 +462,6 @@
       setTimeout(()=>t.classList.remove("show"), 1200);
     }
 
-    /* ===================== TABS ===================== */
     function setTab(targetId){
       document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
       document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
@@ -488,7 +469,6 @@
       $(targetId)?.classList.add("active");
     }
 
-    /* ===================== LABELS ===================== */
     function labelItem(k){
       const map = {
         full:"Full tune (Kompletan tuning)",
@@ -511,67 +491,67 @@
       return map[k] || k;
     }
 
-    /* ===================== CUSTOMER RENDER ===================== */
+    /* ===================== CORE CALC (REAL-TIME) =====================
+      Rules:
+      - Full/Sound: banka += cust (100%), mehaničar zarada sada = 0
+                   bonusBase += (cust - cost)
+      - Ostalo (duplo): banka += cost, zarada sada += (cust - cost)
+    */
+    function calcCartBreakdown(){
+      let custTotal = 0;
+      let bankDue = 0;
+      let mechProfitNow = 0;
+      let bonusBase = 0;
+
+      Object.keys(cart).forEach(k=>{
+        const qty = cart[k]||0;
+        if(qty<=0) return;
+
+        const p = PRICES[k];
+        const cust = (p?.cust||0) * qty;
+        const cost = (p?.cost||0) * qty;
+
+        custTotal += cust;
+
+        if(k === "full" || k === "sound"){
+          bankDue += cust;                 // sve u banku
+          bonusBase += (cust - cost);      // profit na koji ide 10%
+        } else {
+          bankDue += cost;                // vrati firmi koliko je skripta uzela
+          mechProfitNow += (cust - cost); // zarada mehaničara
+        }
+      });
+
+      const bonusEstimate = Math.round(bonusBase * 0.10);
+      return {custTotal, bankDue, mechProfitNow, bonusEstimate};
+    }
+
     function renderCustomer(){
-      let total = 0;
       let lines = [];
       Object.keys(cart).forEach(k=>{
         const qty = cart[k]||0;
         if(!qty) return;
         const price = PRICES[k].cust * qty;
-        total += price;
         lines.push(`${labelItem(k)} x${qty} → ${money(price)}`);
       });
+      const {custTotal} = calcCartBreakdown();
       $("customerList").innerHTML = lines.length ? lines.join("<br>") : "Nema unosa još.";
-      $("custTotal").textContent = money(total);
+      $("custTotal").textContent = money(custTotal);
     }
 
-    function renderMechTotal(){
-      let total = 0;
-      let cnt = 0;
-      Object.keys(cart).forEach(k=>{
-        const q = cart[k]||0;
-        if(q>0){ cnt += q; total += PRICES[k].cust * q; }
-      });
-      $("custTotalMech").textContent = money(total);
-      $("itemsCount").textContent = String(cnt);
+    function renderMechanicRealtime(){
+      const r = calcCartBreakdown();
+      $("custTotalMech").textContent = money(r.custTotal);
+      $("bankDue").textContent = money(r.bankDue);
+      $("meNowProfit").textContent = money(r.mechProfitNow);
+      $("bonusEstimate").textContent = money(r.bonusEstimate);
     }
 
     function clearCart(){
       cart = {};
       document.querySelectorAll('[id^="qty_"]').forEach(x=>x.textContent="0");
       renderCustomer();
-      renderMechTotal();
-    }
-
-    /* ===================== MECH STATS (iz baze) ===================== */
-    function computeForMechanic(entries){
-      let naplatio=0, banka=0, zarada=0;
-      entries.forEach(e=>{
-        naplatio += e.customer||0;
-        const item = e.item;
-
-        if(item==="full") banka += 100000;
-        else if(item==="sound") banka += 200000;
-        else{
-          const cost = PRICES[item]?.cost || 0;
-          banka += cost;
-          zarada += ((e.customer||0) - cost);
-        }
-      });
-      return {naplatio,banka,zarada};
-    }
-
-    function bindMyStats(){
-      if(!mech) return;
-      db.ref("jobs").orderByChild("mechanic").equalTo(mech).on("value", snap=>{
-        const entries=[];
-        snap.forEach(s=>entries.push(s.val()));
-        const r = computeForMechanic(entries);
-        $("meNaplatio").textContent = money(r.naplatio);
-        $("meBanka").textContent   = money(r.banka);
-        $("meZarada").textContent  = money(r.zarada);
-      });
+      renderMechanicRealtime();
     }
 
     /* ===================== PUBLIC STATS ===================== */
@@ -632,44 +612,6 @@
       });
     });
 
-    /* ===================== ADMIN MECHANICS ===================== */
-    const mechRef = db.ref("mechanics");
-
-    function addMechanic(){
-      if(!adminUnlocked) return alert("Admin samo");
-      const name = $("newMech").value.trim();
-      if(!name) return alert("Unesi ime");
-      mechRef.child(name).set({active:true});
-      $("newMech").value="";
-      toast("Dodat mehaničar");
-    }
-
-    function deactivateMech(name){
-      if(!adminUnlocked) return;
-      if(!confirm("Sigurno otkaz za "+name+"?")) return;
-      mechRef.child(name).update({active:false});
-      toast("Deaktiviran");
-    }
-
-    mechRef.on("value", snap=>{
-      const tb = $("mechBody");
-      if(!tb) return;
-      tb.innerHTML = "";
-      snap.forEach(m=>{
-        const d=m.val()||{};
-        tb.innerHTML += `
-          <tr>
-            <td>${m.key}</td>
-            <td>${d.active ? "Aktivan" : "Neaktivan"}</td>
-            <td>${d.active ? `<button class="btn danger" data-fire="${m.key}">OTKAZ</button>` : "—"}</td>
-          </tr>
-        `;
-      });
-      tb.querySelectorAll("button[data-fire]").forEach(b=>{
-        b.addEventListener("click", ()=>deactivateMech(b.dataset.fire));
-      });
-    });
-
     /* ===================== INVOICES (GOTOVO) ===================== */
     const invoicesRef = db.ref("invoices");
 
@@ -695,24 +637,27 @@
       const items = buildInvoiceItems();
       if(items.length===0) return alert("Nema stavki.");
 
-      let total = 0;
-      items.forEach(i=>total += i.subtotal);
+      const breakdown = calcCartBreakdown();
 
+      // snimi jedan “račun”
       invoicesRef.push({
         mechanic: mech,
         time: Date.now(),
-        total,
+        customerTotal: breakdown.custTotal,
+        bankDue: breakdown.bankDue,
+        mechanicProfitNow: breakdown.mechProfitNow,
+        bonusEstimate: breakdown.bonusEstimate,
         items
       });
 
       toast("Sačuvano: GOTOVO");
       clearCart();
+      setTab("customer");
     }
 
+    /* ===================== ADMIN INVOICES + FILTER ===================== */
     function renderInvoices(list){
       const tb = $("invoiceBody");
-      if(!tb) return;
-
       tb.innerHTML = "";
       list.sort((a,b)=>b.time-a.time);
 
@@ -723,7 +668,9 @@
           <tr>
             <td>${dt}</td>
             <td>${inv.mechanic || ""}</td>
-            <td>${money(inv.total)}</td>
+            <td>${money(inv.customerTotal||0)}</td>
+            <td>${money(inv.bankDue||0)}</td>
+            <td>${money(inv.mechanicProfitNow||0)}</td>
             <td class="left">${itemsText}</td>
           </tr>
         `;
@@ -753,7 +700,7 @@
 
     function bindInvoicesLive(){
       if(!adminUnlocked) return;
-      invoicesRef.limitToLast(500).on("value", snap=>{
+      invoicesRef.limitToLast(800).on("value", snap=>{
         const all=[];
         snap.forEach(s=>all.push(s.val()));
         window.__allInvoices = all;
@@ -804,35 +751,6 @@
       toast("Nitro resetovan");
     }
 
-    /* ===================== WEEKLY BONUS ===================== */
-    function computeWeeklyBonus(){
-      if(!adminUnlocked) return alert("Admin samo");
-      db.ref("jobs").once("value").then(snap=>{
-        const perMech = {};
-        let firmProfit = 0;
-
-        snap.forEach(s=>{
-          const d=s.val();
-          if(d.item === "full"){
-            firmProfit += 65000;
-            perMech[d.mechanic] = (perMech[d.mechanic]||0) + 65000;
-          }
-          if(d.item === "sound"){
-            firmProfit += 50000;
-            perMech[d.mechanic] = (perMech[d.mechanic]||0) + 50000;
-          }
-        });
-
-        let html = `<b>Zarada firme (Full+Sound):</b> ${money(firmProfit)}<br><br>`;
-        html += `<b>Bonusi (10%):</b><br>`;
-        Object.keys(perMech).forEach(m=>{
-          const bonus = Math.round(perMech[m] * 0.10);
-          html += `${m}: ${money(bonus)}<br>`;
-        });
-        $("weeklyResult").innerHTML = html;
-      });
-    }
-
     /* ===================== JOB BUTTONS ===================== */
     function buildJobButtons(){
       const grid = $("jobGrid");
@@ -862,16 +780,13 @@
           cart[k] = (cart[k]||0)+1;
           $("qty_"+k).textContent = cart[k];
 
-          // log svaki klik u jobs (za moju računicu + public stats + bonus)
-          db.ref("jobs").push({ mechanic: mech, item: k, customer: PRICES[k].cust, time: Date.now() });
-
-          // public counters samo full/sound
+          // log za public stats
           if(k==="full" || k==="sound"){
             db.ref("publicStats/"+mech+"/"+k).transaction(v=>(v||0)+1);
           }
 
           renderCustomer();
-          renderMechTotal();
+          renderMechanicRealtime();
           toast("Dodato: "+labelItem(k));
         });
       });
@@ -884,18 +799,9 @@
       mech = name;
       localStorage.setItem("mechanic", mech);
       $("mechLabel").textContent = mech;
-
-      // show menu
       $("jobBox").style.display = "block";
-
-      // init nitro row
       ensureNitroRow(mech);
-
-      // bind my stats
-      bindMyStats();
-
-      // reset current cart UI totals
-      renderMechTotal();
+      renderMechanicRealtime();
       toast("Ulogovan: "+mech);
     }
 
@@ -929,11 +835,11 @@
 
       $("btnLogin").addEventListener("click", loginMechanic);
       $("btnLogout").addEventListener("click", logoutMechanic);
+
       $("btnDone").addEventListener("click", finishInvoice);
       $("btnClear").addEventListener("click", ()=>{ clearCart(); toast("Očišćeno"); });
 
       $("btnAdminUnlock").addEventListener("click", unlockAdmin);
-      $("btnAddMech").addEventListener("click", addMechanic);
 
       $("btnFilterInvoices").addEventListener("click", applyInvoiceFilter);
       $("btnClearFilter").addEventListener("click", ()=>{
@@ -946,20 +852,16 @@
       $("btnNitroTXT").addEventListener("click", exportNitroTXT);
       $("btnNitroReset").addEventListener("click", resetNitro);
 
-      $("btnWeekly").addEventListener("click", computeWeeklyBonus);
-
       buildJobButtons();
 
-      // restore mech
       if(mech){
         $("mechLabel").textContent = mech;
         $("jobBox").style.display = "block";
         ensureNitroRow(mech);
-        bindMyStats();
       }
 
       renderCustomer();
-      renderMechTotal();
+      renderMechanicRealtime();
     });
   </script>
 </body>
