@@ -11,215 +11,65 @@
 
   <style>
     :root{
-      --bg:#0a0a0a;
-      --panel:#111;
-      --panel2:#141414;
-      --line:#2a2a2a;
-      --text:#eaeaea;
-      --muted:#a9a9a9;
-      --accent:#e53935;
-      --danger:#b71c1c;
+      --bg:#0a0a0a; --panel:#111; --panel2:#141414; --line:#2a2a2a;
+      --text:#eaeaea; --muted:#a9a9a9; --accent:#e53935; --danger:#b71c1c;
     }
-
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      font-family: Arial, Helvetica, sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
+    body{ margin:0; font-family:Arial,Helvetica,sans-serif; background:var(--bg); color:var(--text); }
 
-    header{
-      background:#000;
-      border-bottom:1px solid #111;
-      display:flex;
-      align-items:center;
-      gap:14px;
-      padding:14px 18px;
-    }
+    header{ background:#000; border-bottom:1px solid #111; display:flex; gap:14px; padding:14px 18px; align-items:center;}
     .logo{ height:54px; width:auto; display:block; }
-    .brand{ display:flex; flex-direction:column; line-height:1.1; }
-    .brand .title{
-      font-weight:900;
-      letter-spacing:2px;
-      font-size:18px;
-    }
-    .brand .sub{
-      font-size:12px;
-      color:var(--muted);
-      margin-top:4px;
-      letter-spacing:1px;
-    }
+    .brand .title{ font-weight:900; letter-spacing:2px; font-size:18px; }
+    .brand .sub{ font-size:12px; color:var(--muted); margin-top:4px; letter-spacing:1px; }
 
-    .tabs{
-      background:#0d0d0d;
-      border-bottom:1px solid #1c1c1c;
-      padding:12px 12px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .tab{
-      padding:10px 14px;
-      border-radius:10px;
-      border:1px solid #2c2c2c;
-      background:#151515;
-      color:var(--text);
-      cursor:pointer;
-      font-weight:800;
-      letter-spacing:.5px;
-      transition:.15s;
-    }
-    .tab:hover{ transform:translateY(-1px); }
-    .tab.active{
-      background:var(--accent);
-      border-color:var(--accent);
-    }
+    .tabs{ background:#0d0d0d; border-bottom:1px solid #1c1c1c; padding:12px; display:flex; gap:10px; flex-wrap:wrap; }
+    .tab{ padding:10px 14px; border-radius:10px; border:1px solid #2c2c2c; background:#151515; color:var(--text); cursor:pointer; font-weight:800; }
+    .tab.active{ background:var(--accent); border-color:var(--accent); }
 
     .wrap{ padding:18px; }
     .section{ display:none; animation:fade .18s ease; }
     .section.active{ display:block; }
-    @keyframes fade{
-      from{ opacity:0; transform:translateY(5px); }
-      to{ opacity:1; transform:none; }
-    }
+    @keyframes fade{ from{opacity:0; transform:translateY(5px);} to{opacity:1; transform:none;} }
 
-    .box{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-      margin:12px 0;
-      max-width:1100px;
-    }
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
+    .box{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px; margin:12px 0; max-width:1100px;}
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
 
-    input{
-      background:#1a1a1a;
-      border:1px solid #333;
-      color:#fff;
-      border-radius:10px;
-      padding:10px 12px;
-      min-width:240px;
-      outline:none;
+    input,select{
+      background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:10px;
+      padding:10px 12px; min-width:240px;
     }
-    input:focus{ border-color:#555; }
-
-    .btn{
-      border:none;
-      border-radius:10px;
-      padding:10px 14px;
-      font-weight:900;
-      cursor:pointer;
-      background:var(--accent);
-      color:#fff;
-      transition:.15s;
-      letter-spacing:.3px;
-      width:auto;
-    }
-    .btn:hover{ opacity:.95; transform:translateY(-1px); }
-    .btn:active{ transform:translateY(0px); }
+    .btn{ border:none; border-radius:10px; padding:10px 14px; font-weight:900; cursor:pointer; background:var(--accent); color:#fff; width:auto; }
     .btn.dark{ background:#2a2a2a; }
     .btn.danger{ background:var(--danger); }
+    .notice{ font-size:13px; color:var(--muted); margin-top:8px; line-height:1.35; }
 
-    .notice{
-      font-size:13px;
-      color:var(--muted);
-      margin-top:8px;
-      line-height:1.35;
-    }
+    .grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:1100px; }
+    @media (max-width:860px){ .grid{ grid-template-columns:1fr; } }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      max-width:1100px;
-    }
-    @media (max-width: 860px){
-      .grid{ grid-template-columns: 1fr; }
-    }
     .item{
-      background:var(--panel2);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
+      background:var(--panel2); border:1px solid var(--line); border-radius:14px; padding:12px;
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
     }
     .item .name{ font-weight:900; }
     .item .small{ font-size:12px; color:var(--muted); margin-top:4px; }
     .item .actions{ display:flex; gap:10px; align-items:center; }
-    .qty{
-      min-width:32px;
-      text-align:center;
-      font-weight:900;
-      color:#9ef7d5;
-    }
+    .qty{ min-width:32px; text-align:center; font-weight:900; color:#9ef7d5; }
 
-    .kpis{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(180px, 1fr));
-      gap:10px;
-      max-width:1100px;
-    }
-    @media (max-width: 860px){
-      .kpis{ grid-template-columns: 1fr; }
-    }
-    .kpi{
-      background:#0f0f0f;
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-    }
+    .kpis{ display:grid; grid-template-columns:repeat(4, minmax(180px, 1fr)); gap:10px; max-width:1100px; }
+    @media (max-width:860px){ .kpis{ grid-template-columns:1fr; } }
+    .kpi{ background:#0f0f0f; border:1px solid var(--line); border-radius:14px; padding:12px; }
     .kpi .label{ font-size:12px; color:var(--muted); }
     .kpi .val{ font-size:18px; font-weight:900; margin-top:4px; }
 
-    table{
-      width:min(1100px,100%);
-      border-collapse:collapse;
-      overflow:hidden;
-      border-radius:14px;
-    }
-    th,td{
-      border:1px solid #303030;
-      padding:8px;
-      text-align:center;
-    }
-    th{
-      background:#0f0f0f;
-      color:#ff7b78;
-      font-weight:900;
-    }
+    table{ width:min(1100px,100%); border-collapse:collapse; border-radius:14px; overflow:hidden; }
+    th,td{ border:1px solid #303030; padding:8px; text-align:center; }
+    th{ background:#0f0f0f; color:#ff7b78; font-weight:900; }
     td{ background:#0c0c0c; }
     td.left{ text-align:left; }
 
-    .toast{
-      position:fixed;
-      right:16px;
-      bottom:16px;
-      background:#1d1d1d;
-      border:1px solid #333;
-      color:#fff;
-      padding:10px 12px;
-      border-radius:14px;
-      opacity:0;
-      transform:translateY(8px);
-      transition:.18s;
-      z-index:9999;
-      max-width: 90vw;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .toast.show{ opacity:1; transform:none; }
+    .toast{ position:fixed; right:16px; bottom:16px; background:#1d1d1d; border:1px solid #333;
+            padding:10px 12px; border-radius:14px; opacity:0; transition:.18s; z-index:9999;}
+    .toast.show{ opacity:1; }
   </style>
 </head>
 
@@ -232,9 +82,10 @@
     </div>
   </header>
 
+  <!-- TABOVI: MEHANIČAR pa CUSTOMER -->
   <div class="tabs">
-    <button class="tab active" data-target="customer">Customer</button>
-    <button class="tab" data-target="mechanic">Mehaničar</button>
+    <button class="tab active" data-target="mechanic">Mehaničar</button>
+    <button class="tab" data-target="customer">Customer</button>
     <button class="tab" data-target="public">Statistika</button>
     <button class="tab" data-target="nitro">Nitro</button>
     <button class="tab" data-target="admin">Admin</button>
@@ -242,14 +93,47 @@
 
   <div class="wrap">
 
-    <!-- RACUN -->
-    <section id="customer" class="section active">
+    <!-- MEHANIČAR -->
+    <section id="mechanic" class="section active">
+      <h2>Mehaničar</h2>
+
+      <div class="box">
+        <div class="row">
+          <select id="mechSelect"></select>
+          <button class="btn" id="btnLogin">UĐI</button>
+          <button class="btn dark" id="btnLogout">ODJAVA</button>
+        </div>
+        <div class="notice">Ulogovan: <b id="mechLabel">—</b></div>
+        <div class="notice">Biraš ime samo sa admin liste (ne može bilo koje ime).</div>
+      </div>
+
+      <div class="box" id="jobBox" style="display:none">
+        <h3>Dodaj posao (+1)</h3>
+        <div id="jobGrid" class="grid"></div>
+
+        <div class="kpis" style="margin-top:12px">
+          <div class="kpi"><div class="label">UKUPNO ZA MUŠTERIJU</div><div class="val" id="custTotalMech">0$</div></div>
+          <div class="kpi"><div class="label">ZA BANKU (FIRMA) – UPLATA</div><div class="val" id="bankDue">0$</div></div>
+          <div class="kpi"><div class="label">MOJA ZARADA SADA</div><div class="val" id="meNowProfit">0$</div></div>
+          <div class="kpi"><div class="label">BONUS PROCENA (10% Full/Sound)</div><div class="val" id="bonusEstimate">0$</div></div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn" id="btnDone">✅ GOTOVO</button>
+          <button class="btn dark" id="btnClear">🧹 Očisti</button>
+        </div>
+
+        <div class="notice">Full + Sound: sve ide u banku, bonus 10% admin računa.</div>
+      </div>
+    </section>
+
+    <!-- ZA NAPLATU -->
+    <section id="customer" class="section">
       <h2>Račun za mušteriju</h2>
       <div class="box">
-        <div class="notice">Mušterija vidi stavke + konačnu cenu.</div>
+        <div class="notice">Mušterija vidi samo stavke + konačnu cenu.</div>
         <div id="customerList" class="notice" style="margin-top:10px"></div>
-
-        <div class="kpis" style="margin-top:12px; grid-template-columns: 1fr;">
+        <div class="kpis" style="margin-top:12px; grid-template-columns:1fr;">
           <div class="kpi">
             <div class="label">UKUPNO</div>
             <div class="val" id="custTotal">0$</div>
@@ -258,63 +142,15 @@
       </div>
     </section>
 
-    <!-- MEHANIČAR -->
-    <section id="mechanic" class="section">
-      <h2>Mehaničar</h2>
-
-      <div class="box">
-        <div class="row">
-          <input id="mechName" placeholder="Unesi svoje ime (npr. Marković)">
-          <button class="btn" id="btnLogin">UĐI</button>
-          <button class="btn dark" id="btnLogout">ODJAVA</button>
-        </div>
-        <div class="notice">Ulogovan: <b id="mechLabel">—</b></div>
-        <div class="notice">Tek kad se uloguješ, pojavljuje se meni sa delovima.</div>
-      </div>
-
-      <!-- MENI SA DELOVIMA -->
-      <div class="box" id="jobBox" style="display:none">
-        <h3>Dodaj posao (+1)</h3>
-        <div id="jobGrid" class="grid"></div>
-
-        <div class="kpis" style="margin-top:12px">
-          <div class="kpi">
-            <div class="label">UKUPNO ZA MUŠTERIJU</div>
-            <div class="val" id="custTotalMech">0$</div>
-          </div>
-          <div class="kpi">
-            <div class="label">ZA BANKU (FIRMA) – DUŽAN SI DA UPLATIŠ</div>
-            <div class="val" id="bankDue">0$</div>
-          </div>
-          <div class="kpi">
-            <div class="label">MOJA ZARADA SADA</div>
-            <div class="val" id="meNowProfit">0$</div>
-          </div>
-          <div class="kpi">
-            <div class="label">BONUS PROCENA (10% Full/Sound)</div>
-            <div class="val" id="bonusEstimate">0$</div>
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:10px">
-          <button class="btn" id="btnDone">✅ GOTOVO</button>
-          <button class="btn dark" id="btnClear">🧹 Očisti</button>
-        </div>
-
-        <div class="notice">
-          Full tune + Custom sound: cela naplata ide u banku, bonus 10% se obračuna na kraju nedelje (admin).
-        </div>
-      </div>
-    </section>
-
     <!-- PUBLIC -->
     <section id="public" class="section">
-      <h2>Javna statistika (svi vide)</h2>
+      <h2>Javna statistika</h2>
       <div class="box">
         <table>
           <thead><tr><th>Mehaničar</th><th>Full tune</th><th>Custom sound</th></tr></thead>
           <tbody id="publicBody"></tbody>
         </table>
+        <div class="notice">Prikaz je samo za aktivne mehaničare (admin lista).</div>
       </div>
     </section>
 
@@ -322,11 +158,11 @@
     <section id="nitro" class="section">
       <h2>Nitro & Materijali (live)</h2>
       <div class="box">
-        <div class="notice">Samo svoj red možeš da menjaš. Ostalo je read-only.</div>
+        <div class="notice">Redovi dolaze iz admin liste. Mehaničar menja samo svoj red.</div>
         <table>
           <thead>
             <tr>
-              <th>Ime</th><th>Nitro</th><th>Guma (Tire)</th><th>Aluminijum (Aluminum)</th><th>Čelik (Steel)</th><th>Skarp (Scrap)</th>
+              <th>Ime</th><th>Nitro</th><th>Guma</th><th>Aluminijum</th><th>Čelik</th><th>Skarp</th>
             </tr>
           </thead>
           <tbody id="nitroBody"></tbody>
@@ -343,13 +179,29 @@
           <input type="password" id="adminPin" placeholder="PIN (1234)">
           <button class="btn" id="btnAdminUnlock">OTKLJUČAJ</button>
         </div>
-        <div class="notice">Admin vidi “GOTOVO” račune + filter po datumima.</div>
       </div>
 
       <div id="adminPanel" style="display:none">
 
         <div class="box">
-          <h3>Gotovo – pregledi (računi)</h3>
+          <h3>Mehaničari (Admin lista)</h3>
+          <div class="row">
+            <input id="newMech" placeholder="Novo ime (npr. Marković)">
+            <button class="btn" id="btnAddMech">DODAJ</button>
+          </div>
+
+          <table style="margin-top:12px">
+            <thead><tr><th>Ime</th><th>Status</th><th>Akcija</th></tr></thead>
+            <tbody id="mechBody"></tbody>
+          </table>
+
+          <div class="notice">
+            “Otkaz” = deaktivira (ne prikazuje se u listi). “Obriši” = trajno ukloni.
+          </div>
+        </div>
+
+        <div class="box">
+          <h3>Gotovo – računi (tuning poslovi)</h3>
           <div class="row">
             <input type="date" id="fromDate">
             <input type="date" id="toDate">
@@ -357,35 +209,30 @@
             <button class="btn dark" id="btnClearFilter">✖ Reset filter</button>
           </div>
 
+          <div class="row" style="margin-top:10px">
+            <button class="btn danger" id="btnResetTuning">🔄 Reset Tuning (računi + statistika)</button>
+          </div>
+
           <table style="margin-top:12px">
             <thead>
-              <tr>
-                <th>Datum</th>
-                <th>Mehaničar</th>
-                <th>Mušterija</th>
-                <th>Banka</th>
-                <th>Zarada</th>
-                <th>Stavke</th>
-              </tr>
+              <tr><th>Datum</th><th>Mehaničar</th><th>Mušterija</th><th>Banka</th><th>Zarada</th><th>Stavke</th></tr>
             </thead>
             <tbody id="invoiceBody"></tbody>
           </table>
-
-          <div class="notice">Svaki klik “GOTOVO” pravi jedan zapis sa datumom, ukupnim i internom računicom.</div>
+          <div class="notice">Reset Tuning briše: invoices + publicStats (cena ostaje u kodu).</div>
         </div>
 
         <div class="box">
           <h3>Nitro – Admin</h3>
           <div class="row">
-            <button class="btn" id="btnNitroCSV">📤 Export Nitro CSV</button>
-            <button class="btn" id="btnNitroTXT">📤 Export Nitro TXT</button>
-            <button class="btn danger" id="btnNitroReset">🔄 Reset Nitro</button>
+            <button class="btn danger" id="btnResetNitro">🔄 Reset Nitro</button>
           </div>
-          <div class="notice">Reset briše samo Nitro podatke.</div>
+          <div class="notice">Reset Nitro briše samo nitro podatke.</div>
         </div>
 
       </div>
     </section>
+
   </div>
 
   <div id="toast" class="toast"></div>
@@ -403,15 +250,10 @@
     });
     const db = firebase.database();
 
-    /* ===================== PRICES =====================
-      - cust: koliko plaća mušterija
-      - cost: koliko “košta firmu” (to se vraća u banku, kod duplo stavki)
-      Full/Sound: cela naplata ide u banku; bonus se računa na profitu (cust-cost)
-    */
+    /* ===================== PRICES ===================== */
     const PRICES = {
-      full:{cust:100000, cost:35000},        // profit 65000
-      sound:{cust:200000, cost:150000},      // profit 50000
-
+      full:{cust:100000, cost:35000},
+      sound:{cust:200000, cost:150000},
       tint:{cust:2400, cost:1200},
       paint:{cust:2400, cost:1200},
       stance:{cust:50000, cost:25000},
@@ -447,10 +289,17 @@
       {k:"tracker",title:"Tracker", sub:"Lokator"}
     ];
 
+    /* ===================== REFS ===================== */
+    const mechRef = db.ref("mechanics");      // admin lista
+    const nitroRef = db.ref("nitro");         // nitro tabela
+    const statsRef = db.ref("publicStats");   // full/sound
+    const invoicesRef = db.ref("invoices");   // gotove porudžbine (tuning)
+
     /* ===================== STATE ===================== */
     let mech = localStorage.getItem("mechanic") || "";
     let adminUnlocked = false;
-    let cart = {}; // trenutni “auto” (pre GOTOVO)
+    let cart = {};
+    let activeMechs = []; // lista aktivnih iz baze
 
     const $ = (id)=>document.getElementById(id);
     const money = (n)=>(Number(n)||0).toLocaleString()+"$";
@@ -459,7 +308,7 @@
       const t = $("toast");
       t.textContent = msg;
       t.classList.add("show");
-      setTimeout(()=>t.classList.remove("show"), 1200);
+      setTimeout(()=>t.classList.remove("show"), 1100);
     }
 
     function setTab(targetId){
@@ -491,52 +340,47 @@
       return map[k] || k;
     }
 
-    /* ===================== CORE CALC (REAL-TIME) =====================
-      Rules:
-      - Full/Sound: banka += cust (100%), mehaničar zarada sada = 0
-                   bonusBase += (cust - cost)
-      - Ostalo (duplo): banka += cost, zarada sada += (cust - cost)
-    */
+    /* ===================== CALC ===================== */
     function calcCartBreakdown(){
-      let custTotal = 0;
-      let bankDue = 0;
-      let mechProfitNow = 0;
-      let bonusBase = 0;
+      let custTotal = 0, bankDue = 0, mechProfitNow = 0, bonusBase = 0;
 
-      Object.keys(cart).forEach(k=>{
+      for(const k of Object.keys(cart)){
         const qty = cart[k]||0;
-        if(qty<=0) return;
+        if(qty<=0) continue;
 
-        const p = PRICES[k];
-        const cust = (p?.cust||0) * qty;
-        const cost = (p?.cost||0) * qty;
+        const p = PRICES[k] || {cust:0,cost:0};
+        const cust = (p.cust||0) * qty;
+        const cost = (p.cost||0) * qty;
 
         custTotal += cust;
 
-        if(k === "full" || k === "sound"){
-          bankDue += cust;                 // sve u banku
-          bonusBase += (cust - cost);      // profit na koji ide 10%
+        if(k==="full" || k==="sound"){
+          bankDue += cust;
+          bonusBase += (cust - cost);
         } else {
-          bankDue += cost;                // vrati firmi koliko je skripta uzela
-          mechProfitNow += (cust - cost); // zarada mehaničara
+          bankDue += cost;
+          mechProfitNow += (cust - cost);
         }
-      });
+      }
 
-      const bonusEstimate = Math.round(bonusBase * 0.10);
-      return {custTotal, bankDue, mechProfitNow, bonusEstimate};
+      return {
+        custTotal,
+        bankDue,
+        mechProfitNow,
+        bonusEstimate: Math.round(bonusBase * 0.10)
+      };
     }
 
     function renderCustomer(){
-      let lines = [];
-      Object.keys(cart).forEach(k=>{
+      const lines = [];
+      for(const k of Object.keys(cart)){
         const qty = cart[k]||0;
-        if(!qty) return;
-        const price = PRICES[k].cust * qty;
-        lines.push(`${labelItem(k)} x${qty} → ${money(price)}`);
-      });
-      const {custTotal} = calcCartBreakdown();
+        if(!qty) continue;
+        lines.push(`${labelItem(k)} x${qty} → ${money(PRICES[k].cust * qty)}`);
+      }
+      const r = calcCartBreakdown();
       $("customerList").innerHTML = lines.length ? lines.join("<br>") : "Nema unosa još.";
-      $("custTotal").textContent = money(custTotal);
+      $("custTotal").textContent = money(r.custTotal);
     }
 
     function renderMechanicRealtime(){
@@ -554,108 +398,83 @@
       renderMechanicRealtime();
     }
 
-    /* ===================== PUBLIC STATS ===================== */
-    db.ref("publicStats").on("value", snap=>{
-      const tb = $("publicBody");
-      tb.innerHTML = "";
-      snap.forEach(m=>{
-        const v=m.val()||{};
-        tb.innerHTML += `<tr><td>${m.key}</td><td>${v.full||0}</td><td>${v.sound||0}</td></tr>`;
-      });
-    });
-
-    /* ===================== NITRO ===================== */
-    const nitroRef = db.ref("nitro");
-
-    function ensureNitroRow(name){
-      if(!name) return;
-      nitroRef.child(name).once("value").then(s=>{
-        if(!s.exists()){
-          nitroRef.child(name).set({nitro:0,tire:0,aluminum:0,steel:0,scrap:0});
-        }
-      });
-    }
-
-    function updateNitro(name, key, value){
-      const v = Math.max(0, Number(value)||0);
-      nitroRef.child(name).child(key).set(v);
-    }
-
-    nitroRef.on("value", snap=>{
-      const tb = $("nitroBody");
-      tb.innerHTML = "";
-      snap.forEach(m=>{
-        const d = m.val()||{};
-        const canEdit = (m.key === mech);
-
-        const cell = (key,val)=>{
-          if(!canEdit) return `<td>${val||0}</td>`;
-          return `<td><input data-nname="${m.key}" data-nkey="${key}" type="number" min="0" value="${val||0}" style="min-width:90px"></td>`;
-        };
-
-        tb.innerHTML += `
-          <tr>
-            <td>${m.key}</td>
-            ${cell("nitro",d.nitro)}
-            ${cell("tire",d.tire)}
-            ${cell("aluminum",d.aluminum)}
-            ${cell("steel",d.steel)}
-            ${cell("scrap",d.scrap)}
-          </tr>
+    /* ===================== JOB GRID ===================== */
+    function buildJobButtons(){
+      const grid = $("jobGrid");
+      grid.innerHTML = "";
+      JOBS_UI.forEach(j=>{
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div>
+            <div class="name">${j.title}</div>
+            <div class="small">${j.sub}</div>
+          </div>
+          <div class="actions">
+            <span class="qty" id="qty_${j.k}">0</span>
+            <button class="btn" data-job="${j.k}" type="button">+1</button>
+          </div>
         `;
+        grid.appendChild(el);
       });
 
-      tb.querySelectorAll("input[data-nname]").forEach(inp=>{
-        inp.addEventListener("change", ()=>{
-          updateNitro(inp.dataset.nname, inp.dataset.nkey, inp.value);
-        });
+      grid.addEventListener("click", (e)=>{
+        const btn = e.target.closest("button[data-job]");
+        if(!btn) return;
+        if(!mech) return alert("Uloguj se.");
+
+        const k = btn.dataset.job;
+        cart[k] = (cart[k]||0)+1;
+        const q = $("qty_"+k);
+        if(q) q.textContent = cart[k];
+
+        // realtime
+        renderCustomer();
+        renderMechanicRealtime();
+
+        // public stats
+        if(k==="full" || k==="sound"){
+          statsRef.child(mech).child(k).transaction(v=>(v||0)+1);
+        }
+
+        toast("Dodato: "+labelItem(k));
       });
-    });
+    }
 
     /* ===================== INVOICES (GOTOVO) ===================== */
-    const invoicesRef = db.ref("invoices");
-
     function buildInvoiceItems(){
-      const items = [];
-      Object.keys(cart).forEach(k=>{
-        const qty = cart[k]||0;
+      const items=[];
+      for(const k of Object.keys(cart)){
+        const qty=cart[k]||0;
         if(qty>0){
-          items.push({
-            key:k,
-            label: labelItem(k),
-            qty,
-            unit: PRICES[k].cust,
-            subtotal: PRICES[k].cust * qty
-          });
+          items.push({key:k,label:labelItem(k),qty,unit:PRICES[k].cust,subtotal:PRICES[k].cust*qty});
         }
-      });
+      }
       return items;
     }
 
     function finishInvoice(){
-      if(!mech) return alert("Uloguj se imenom prvo.");
+      if(!mech) return alert("Uloguj se.");
       const items = buildInvoiceItems();
       if(items.length===0) return alert("Nema stavki.");
 
-      const breakdown = calcCartBreakdown();
-
-      // snimi jedan “račun”
+      const r = calcCartBreakdown();
       invoicesRef.push({
         mechanic: mech,
         time: Date.now(),
-        customerTotal: breakdown.custTotal,
-        bankDue: breakdown.bankDue,
-        mechanicProfitNow: breakdown.mechProfitNow,
-        bonusEstimate: breakdown.bonusEstimate,
+        customerTotal: r.custTotal,
+        bankDue: r.bankDue,
+        mechanicProfitNow: r.mechProfitNow,
+        bonusEstimate: r.bonusEstimate,
         items
       });
 
-      toast("Sačuvano: GOTOVO");
+      toast("GOTOVO sačuvano");
       clearCart();
       setTab("customer");
     }
 
-    /* ===================== ADMIN INVOICES + FILTER ===================== */
+    /* ===================== ADMIN INVOICES ===================== */
     function renderInvoices(list){
       const tb = $("invoiceBody");
       tb.innerHTML = "";
@@ -667,7 +486,7 @@
         tb.innerHTML += `
           <tr>
             <td>${dt}</td>
-            <td>${inv.mechanic || ""}</td>
+            <td>${inv.mechanic||""}</td>
             <td>${money(inv.customerTotal||0)}</td>
             <td>${money(inv.bankDue||0)}</td>
             <td>${money(inv.mechanicProfitNow||0)}</td>
@@ -678,29 +497,29 @@
     }
 
     function getDateRange(){
-      const f = $("fromDate")?.value;
-      const t = $("toDate")?.value;
-      const fromMs = f ? new Date(f+"T00:00:00").getTime() : null;
-      const toMs   = t ? new Date(t+"T23:59:59").getTime() : null;
-      return {fromMs, toMs};
+      const f=$("fromDate")?.value;
+      const t=$("toDate")?.value;
+      return {
+        fromMs: f ? new Date(f+"T00:00:00").getTime() : null,
+        toMs:   t ? new Date(t+"T23:59:59").getTime() : null
+      };
     }
 
     function applyInvoiceFilter(){
       const all = window.__allInvoices || [];
-      const {fromMs, toMs} = getDateRange();
+      const {fromMs,toMs} = getDateRange();
 
       const filtered = all.filter(inv=>{
         if(fromMs && inv.time < fromMs) return false;
         if(toMs && inv.time > toMs) return false;
         return true;
       });
-
       renderInvoices(filtered);
     }
 
     function bindInvoicesLive(){
       if(!adminUnlocked) return;
-      invoicesRef.limitToLast(800).on("value", snap=>{
+      invoicesRef.limitToLast(1000).on("value", snap=>{
         const all=[];
         snap.forEach(s=>all.push(s.val()));
         window.__allInvoices = all;
@@ -708,156 +527,224 @@
       });
     }
 
-    /* ===================== ADMIN: NITRO EXPORT/RESET ===================== */
-    function downloadFile(filename, content, type){
-      const blob = new Blob([content], {type});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href=url; a.download=filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+    /* ===================== ADMIN MECH LIST ===================== */
+    function syncMechSelect(){
+      const sel = $("mechSelect");
+      const current = sel.value;
+      sel.innerHTML = `<option value="">— Izaberi ime —</option>` +
+        activeMechs.map(n=>`<option value="${n}">${n}</option>`).join("");
+
+      // pokušaj vrati staro
+      if(current && activeMechs.includes(current)) sel.value = current;
+      else if(mech && activeMechs.includes(mech)) sel.value = mech;
     }
 
-    function exportNitroCSV(){
-      if(!adminUnlocked) return alert("Admin samo");
-      db.ref("nitro").once("value").then(snap=>{
-        let csv="mechanic,nitro,tire,aluminum,steel,scrap\n";
-        snap.forEach(s=>{
-          const d=s.val()||{};
-          csv += `${s.key},${d.nitro||0},${d.tire||0},${d.aluminum||0},${d.steel||0},${d.scrap||0}\n`;
+    function ensureNitroRowsForActive(){
+      // obezbedi da svaki aktivni ima red u nitru
+      activeMechs.forEach(name=>{
+        nitroRef.child(name).once("value").then(s=>{
+          if(!s.exists()){
+            nitroRef.child(name).set({nitro:0,tire:0,aluminum:0,steel:0,scrap:0});
+          }
         });
-        downloadFile("nitro.csv", csv, "text/csv");
       });
     }
 
-    function exportNitroTXT(){
-      if(!adminUnlocked) return alert("Admin samo");
-      db.ref("nitro").once("value").then(snap=>{
-        let txt="NITRO LISTING\n\n";
-        snap.forEach(s=>{
-          const d=s.val()||{};
-          txt += `${s.key}: NITRO ${d.nitro||0}, TIRE ${d.tire||0}, ALU ${d.aluminum||0}, STEEL ${d.steel||0}, SCRAP ${d.scrap||0}\n`;
-        });
-        downloadFile("nitro.txt", txt, "text/plain");
+    mechRef.on("value", snap=>{
+      const tbody = $("mechBody");
+      activeMechs = [];
+      tbody.innerHTML = "";
+
+      snap.forEach(m=>{
+        const d=m.val()||{};
+        const name=m.key;
+
+        const active = !!d.active;
+        if(active) activeMechs.push(name);
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${name}</td>
+            <td>${active ? "Aktivan" : "Neaktivan"}</td>
+            <td>
+              ${active ? `<button class="btn danger" data-fire="${name}">OTKAZ</button>` : `<button class="btn" data-rehire="${name}">VRATI</button>`}
+              <button class="btn dark" data-del="${name}">OBRIŠI</button>
+            </td>
+          </tr>
+        `;
       });
+
+      // bind buttons
+      tbody.querySelectorAll("button[data-fire]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          if(!adminUnlocked) return alert("Admin samo");
+          const name=b.dataset.fire;
+          if(!confirm("Otkaz: "+name+"?")) return;
+          mechRef.child(name).update({active:false});
+        });
+      });
+      tbody.querySelectorAll("button[data-rehire]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          if(!adminUnlocked) return alert("Admin samo");
+          const name=b.dataset.rehire;
+          mechRef.child(name).update({active:true});
+        });
+      });
+      tbody.querySelectorAll("button[data-del]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          if(!adminUnlocked) return alert("Admin samo");
+          const name=b.dataset.del;
+          if(!confirm("TRAJNO obrisati "+name+"?")) return;
+          mechRef.child(name).remove();
+          // opcionalno: obriši i njegove nitro podatke
+          nitroRef.child(name).remove();
+          // i stats
+          statsRef.child(name).remove();
+        });
+      });
+
+      syncMechSelect();
+      ensureNitroRowsForActive();
+
+      // ako je ulogovan a više nije aktivan -> izbaci ga
+      if(mech && !activeMechs.includes(mech)){
+        logoutMechanic(true);
+      }
+    });
+
+    function addMechanic(){
+      if(!adminUnlocked) return alert("Admin samo");
+      const name=$("newMech").value.trim();
+      if(!name) return alert("Unesi ime");
+      mechRef.child(name).set({active:true});
+      $("newMech").value="";
+      toast("Dodat: "+name);
     }
 
+    /* ===================== PUBLIC TABLE (only active) ===================== */
+    statsRef.on("value", snap=>{
+      const tb = $("publicBody");
+      tb.innerHTML = "";
+      activeMechs.forEach(name=>{
+        const v = snap.child(name).val() || {};
+        tb.innerHTML += `<tr><td>${name}</td><td>${v.full||0}</td><td>${v.sound||0}</td></tr>`;
+      });
+    });
+
+    /* ===================== NITRO TABLE ===================== */
+    nitroRef.on("value", snap=>{
+      const tb = $("nitroBody");
+      tb.innerHTML = "";
+
+      activeMechs.forEach(name=>{
+        const d = snap.child(name).val() || {nitro:0,tire:0,aluminum:0,steel:0,scrap:0};
+        const canEdit = (name === mech);
+
+        const cell = (key,val)=>{
+          if(!canEdit) return `<td>${val||0}</td>`;
+          return `<td><input data-nname="${name}" data-nkey="${key}" type="number" min="0" value="${val||0}" style="min-width:90px"></td>`;
+        };
+
+        tb.innerHTML += `
+          <tr>
+            <td>${name}</td>
+            ${cell("nitro",d.nitro)}
+            ${cell("tire",d.tire)}
+            ${cell("aluminum",d.aluminum)}
+            ${cell("steel",d.steel)}
+            ${cell("scrap",d.scrap)}
+          </tr>
+        `;
+      });
+
+      tb.querySelectorAll("input[data-nname]").forEach(inp=>{
+        inp.addEventListener("change", ()=>{
+          const v = Math.max(0, Number(inp.value)||0);
+          nitroRef.child(inp.dataset.nname).child(inp.dataset.nkey).set(v);
+        });
+      });
+    });
+
+    /* ===================== RESET FUNCTIONS ===================== */
     function resetNitro(){
       if(!adminUnlocked) return alert("Admin samo");
-      if(!confirm("SIGURNO? Ovo briše sve Nitro podatke!")) return;
+      if(!confirm("Reset Nitro? Ovo briše SVE nitro podatke.")) return;
       db.ref("nitro").remove();
       toast("Nitro resetovan");
+      // ponovo kreiraj redove za aktivne
+      setTimeout(ensureNitroRowsForActive, 400);
     }
 
-    /* ===================== JOB BUTTONS ===================== */
-    function buildJobButtons(){
-      const grid = $("jobGrid");
-      grid.innerHTML = "";
-
-      JOBS_UI.forEach(j=>{
-        const el = document.createElement("div");
-        el.className = "item";
-        el.innerHTML = `
-          <div>
-            <div class="name">${j.title}</div>
-            <div class="small">${j.sub}</div>
-          </div>
-          <div class="actions">
-            <span class="qty" id="qty_${j.k}">0</span>
-            <button class="btn" data-job="${j.k}">+1</button>
-          </div>
-        `;
-        grid.appendChild(el);
-      });
-
-      grid.querySelectorAll("button[data-job]").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          if(!mech){ alert("Uloguj se imenom prvo."); return; }
-
-          const k = b.dataset.job;
-          cart[k] = (cart[k]||0)+1;
-          $("qty_"+k).textContent = cart[k];
-
-          // log za public stats
-          if(k==="full" || k==="sound"){
-            db.ref("publicStats/"+mech+"/"+k).transaction(v=>(v||0)+1);
-          }
-
-          renderCustomer();
-          renderMechanicRealtime();
-          toast("Dodato: "+labelItem(k));
-        });
-      });
+    function resetTuning(){
+      if(!adminUnlocked) return alert("Admin samo");
+      if(!confirm("Reset Tuning? Briše invoices + publicStats.")) return;
+      db.ref("invoices").remove();
+      db.ref("publicStats").remove();
+      toast("Tuning resetovan");
     }
 
     /* ===================== AUTH ===================== */
     function loginMechanic(){
-      const name = $("mechName").value.trim();
-      if(!name) return alert("Unesi ime");
+      const name = $("mechSelect").value;
+      if(!name) return alert("Izaberi ime");
+      if(!activeMechs.includes(name)) return alert("Ime nije aktivno (admin lista).");
       mech = name;
       localStorage.setItem("mechanic", mech);
       $("mechLabel").textContent = mech;
       $("jobBox").style.display = "block";
-      ensureNitroRow(mech);
-      renderMechanicRealtime();
+      clearCart();
       toast("Ulogovan: "+mech);
     }
 
-    function logoutMechanic(){
+    function logoutMechanic(silent){
       mech = "";
       localStorage.removeItem("mechanic");
       $("mechLabel").textContent = "—";
       $("jobBox").style.display = "none";
       clearCart();
-      toast("Odjava");
+      if(!silent) toast("Odjava");
     }
 
     function unlockAdmin(){
       const pin = $("adminPin").value;
-      if(pin === "2468"){
+      if(pin==="2468"){
         adminUnlocked = true;
-        $("adminLock").style.display = "none";
-        $("adminPanel").style.display = "block";
+        $("adminLock").style.display="none";
+        $("adminPanel").style.display="block";
         bindInvoicesLive();
         toast("Admin OK");
-      }else{
-        alert("Pogrešan PIN");
-      }
+      }else alert("Pogrešan PIN");
     }
 
     /* ===================== INIT ===================== */
     document.addEventListener("DOMContentLoaded", ()=>{
-      document.querySelectorAll(".tab").forEach(b=>{
-        b.addEventListener("click", ()=>setTab(b.dataset.target));
-      });
+      document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click", ()=>setTab(b.dataset.target)));
+
+      buildJobButtons();
 
       $("btnLogin").addEventListener("click", loginMechanic);
-      $("btnLogout").addEventListener("click", logoutMechanic);
-
+      $("btnLogout").addEventListener("click", ()=>logoutMechanic(false));
       $("btnDone").addEventListener("click", finishInvoice);
       $("btnClear").addEventListener("click", ()=>{ clearCart(); toast("Očišćeno"); });
 
       $("btnAdminUnlock").addEventListener("click", unlockAdmin);
+      $("btnAddMech").addEventListener("click", addMechanic);
 
       $("btnFilterInvoices").addEventListener("click", applyInvoiceFilter);
       $("btnClearFilter").addEventListener("click", ()=>{
-        $("fromDate").value="";
-        $("toDate").value="";
+        $("fromDate").value=""; $("toDate").value="";
         applyInvoiceFilter();
       });
 
-      $("btnNitroCSV").addEventListener("click", exportNitroCSV);
-      $("btnNitroTXT").addEventListener("click", exportNitroTXT);
-      $("btnNitroReset").addEventListener("click", resetNitro);
+      $("btnResetNitro").addEventListener("click", resetNitro);
+      $("btnResetTuning").addEventListener("click", resetTuning);
 
-      buildJobButtons();
-
+      // restore mech only if active
       if(mech){
+        // selection will be synced by mechRef listener
         $("mechLabel").textContent = mech;
         $("jobBox").style.display = "block";
-        ensureNitroRow(mech);
+        clearCart();
       }
 
       renderCustomer();
@@ -866,6 +753,3 @@
   </script>
 </body>
 </html>
-
-
-
