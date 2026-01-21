@@ -19,7 +19,6 @@
       --muted:#a9a9a9;
       --accent:#e53935;
       --danger:#b71c1c;
-      --ok:#2ecc71;
     }
 
     *{ box-sizing:border-box; }
@@ -31,7 +30,7 @@
       color:var(--text);
     }
 
-    /* HEADER (full black) */
+    /* HEADER full black */
     header{
       background:#000;
       border-bottom:1px solid #111;
@@ -40,16 +39,8 @@
       gap:14px;
       padding:14px 18px;
     }
-    .logo{
-      height:54px;
-      width:auto;
-      display:block;
-    }
-    .brand{
-      display:flex;
-      flex-direction:column;
-      line-height:1.1;
-    }
+    .logo{ height:54px; width:auto; display:block; }
+    .brand{ display:flex; flex-direction:column; line-height:1.1; }
     .brand .title{
       font-weight:900;
       letter-spacing:2px;
@@ -62,7 +53,7 @@
       letter-spacing:1px;
     }
 
-    /* TABS */
+    /* Tabs */
     .tabs{
       background:#0d0d0d;
       border-bottom:1px solid #1c1c1c;
@@ -88,7 +79,6 @@
       border-color:var(--accent);
     }
 
-    /* LAYOUT */
     .wrap{ padding:18px; }
     .section{ display:none; animation:fade .18s ease; }
     .section.active{ display:block; }
@@ -97,14 +87,13 @@
       to{ opacity:1; transform:none; }
     }
 
-    /* PANELS */
     .box{
       background:var(--panel);
       border:1px solid var(--line);
       border-radius:14px;
       padding:14px;
       margin:12px 0;
-      max-width:980px;
+      max-width:1100px;
     }
     .row{
       display:flex;
@@ -134,6 +123,7 @@
       color:#fff;
       transition:.15s;
       letter-spacing:.3px;
+      width:auto;
     }
     .btn:hover{ opacity:.95; transform:translateY(-1px); }
     .btn:active{ transform:translateY(0px); }
@@ -147,12 +137,11 @@
       line-height:1.35;
     }
 
-    /* JOB GRID */
     .grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:10px;
-      max-width:980px;
+      max-width:1100px;
     }
     @media (max-width: 860px){
       .grid{ grid-template-columns: 1fr; }
@@ -177,12 +166,11 @@
       color:#9ef7d5;
     }
 
-    /* KPIs */
     .kpis{
       display:grid;
       grid-template-columns: repeat(3, minmax(180px, 1fr));
       gap:10px;
-      max-width:980px;
+      max-width:1100px;
     }
     @media (max-width: 860px){
       .kpis{ grid-template-columns: 1fr; }
@@ -196,9 +184,8 @@
     .kpi .label{ font-size:12px; color:var(--muted); }
     .kpi .val{ font-size:18px; font-weight:900; margin-top:4px; }
 
-    /* TABLES */
     table{
-      width:min(980px,100%);
+      width:min(1100px,100%);
       border-collapse:collapse;
       overflow:hidden;
       border-radius:14px;
@@ -214,8 +201,8 @@
       font-weight:900;
     }
     td{ background:#0c0c0c; }
+    td.left{ text-align:left; }
 
-    /* TOAST */
     .toast{
       position:fixed;
       right:16px;
@@ -273,7 +260,7 @@
       </div>
     </section>
 
-    <!-- MECHANIC -->
+    <!-- MEHANIČAR -->
     <section id="mechanic" class="section">
       <h2>Mehaničar</h2>
 
@@ -284,16 +271,40 @@
           <button class="btn dark" id="btnLogout">ODJAVA</button>
         </div>
         <div class="notice">Ulogovan: <b id="mechLabel">—</b></div>
-        <div class="notice">Mehaničar vidi samo svoje: naplaćeno / zarada / za banku.</div>
+        <div class="notice">Tek kad se uloguješ, pojavljuje se meni sa delovima.</div>
       </div>
 
-      <div class="box">
+      <!-- MENI SA DELOVIMA (tek posle logina) -->
+      <div class="box" id="jobBox" style="display:none">
         <h3>Dodaj posao (+1)</h3>
         <div id="jobGrid" class="grid"></div>
+
+        <div class="kpis" style="margin-top:12px">
+          <div class="kpi">
+            <div class="label">UKUPNO ZA MUŠTERIJU (real-time)</div>
+            <div class="val" id="custTotalMech">0$</div>
+          </div>
+          <div class="kpi">
+            <div class="label">BROJ STAVKI</div>
+            <div class="val" id="itemsCount">0</div>
+          </div>
+          <div class="kpi">
+            <div class="label">NAPOMENA</div>
+            <div class="val" style="font-size:14px;font-weight:800;color:#ddd">Klikni GOTOVO kad završiš</div>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn" id="btnDone">✅ GOTOVO</button>
+          <button class="btn dark" id="btnClear">🧹 Očisti</button>
+        </div>
+
+        <div class="notice">“GOTOVO” šalje kompletan spisak u Admin pregled sa imenom i datumom.</div>
       </div>
 
+      <!-- MOJA RAČUNICA (u odnosu na sve moje poslove u bazi) -->
       <div class="box">
-        <h3>Moja računica</h3>
+        <h3>Moja računica (ukupno iz baze)</h3>
         <div class="kpis">
           <div class="kpi"><div class="label">MOJE NAPLAĆENO</div><div class="val" id="meNaplatio">0$</div></div>
           <div class="kpi"><div class="label">MOJA ZARADA</div><div class="val" id="meZarada">0$</div></div>
@@ -340,7 +351,7 @@
           <input type="password" id="adminPin" placeholder="PIN (2468)">
           <button class="btn" id="btnAdminUnlock">OTKLJUČAJ</button>
         </div>
-        <div class="notice">Samo admin ima export/reset i upravljanje mehaničarima.</div>
+        <div class="notice">Samo admin ima export/reset i upravljanje mehaničarima + pregled računa (GOTOVO).</div>
       </div>
 
       <div id="adminPanel" style="display:none">
@@ -356,6 +367,30 @@
             <thead><tr><th>Ime</th><th>Status</th><th>Akcija</th></tr></thead>
             <tbody id="mechBody"></tbody>
           </table>
+        </div>
+
+        <div class="box">
+          <h3>Gotovo – pregledi (računi)</h3>
+          <div class="row">
+            <input type="date" id="fromDate">
+            <input type="date" id="toDate">
+            <button class="btn" id="btnFilterInvoices">🔎 Filtriraj</button>
+            <button class="btn dark" id="btnClearFilter">✖ Reset filter</button>
+          </div>
+
+          <table style="margin-top:12px">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Mehaničar</th>
+                <th>Ukupno</th>
+                <th>Stavke</th>
+              </tr>
+            </thead>
+            <tbody id="invoiceBody"></tbody>
+          </table>
+
+          <div class="notice">Svaki klik “GOTOVO” pravi jedan zapis sa datumom i spiskom.</div>
         </div>
 
         <div class="box">
@@ -375,7 +410,6 @@
         </div>
       </div>
     </section>
-
   </div>
 
   <div id="toast" class="toast"></div>
@@ -434,7 +468,7 @@
     /* ===================== STATE ===================== */
     let mech = localStorage.getItem("mechanic") || "";
     let adminUnlocked = false;
-    let cart = {}; // customer view current session
+    let cart = {}; // trenutni “račun” (pre GOTOVO)
 
     const $ = (id)=>document.getElementById(id);
     const money = (n)=>(Number(n)||0).toLocaleString()+"$";
@@ -477,7 +511,7 @@
       return map[k] || k;
     }
 
-    /* ===================== CUSTOMER ===================== */
+    /* ===================== CUSTOMER RENDER ===================== */
     function renderCustomer(){
       let total = 0;
       let lines = [];
@@ -492,12 +526,31 @@
       $("custTotal").textContent = money(total);
     }
 
-    /* ===================== MECH STATS ===================== */
+    function renderMechTotal(){
+      let total = 0;
+      let cnt = 0;
+      Object.keys(cart).forEach(k=>{
+        const q = cart[k]||0;
+        if(q>0){ cnt += q; total += PRICES[k].cust * q; }
+      });
+      $("custTotalMech").textContent = money(total);
+      $("itemsCount").textContent = String(cnt);
+    }
+
+    function clearCart(){
+      cart = {};
+      document.querySelectorAll('[id^="qty_"]').forEach(x=>x.textContent="0");
+      renderCustomer();
+      renderMechTotal();
+    }
+
+    /* ===================== MECH STATS (iz baze) ===================== */
     function computeForMechanic(entries){
       let naplatio=0, banka=0, zarada=0;
       entries.forEach(e=>{
         naplatio += e.customer||0;
         const item = e.item;
+
         if(item==="full") banka += 100000;
         else if(item==="sound") banka += 200000;
         else{
@@ -521,7 +574,7 @@
       });
     }
 
-    /* ===================== PUBLIC ===================== */
+    /* ===================== PUBLIC STATS ===================== */
     db.ref("publicStats").on("value", snap=>{
       const tb = $("publicBody");
       tb.innerHTML = "";
@@ -554,10 +607,12 @@
       snap.forEach(m=>{
         const d = m.val()||{};
         const canEdit = (m.key === mech);
+
         const cell = (key,val)=>{
           if(!canEdit) return `<td>${val||0}</td>`;
           return `<td><input data-nname="${m.key}" data-nkey="${key}" type="number" min="0" value="${val||0}" style="min-width:90px"></td>`;
         };
+
         tb.innerHTML += `
           <tr>
             <td>${m.key}</td>
@@ -569,6 +624,7 @@
           </tr>
         `;
       });
+
       tb.querySelectorAll("input[data-nname]").forEach(inp=>{
         inp.addEventListener("change", ()=>{
           updateNitro(inp.dataset.nname, inp.dataset.nkey, inp.value);
@@ -614,7 +670,98 @@
       });
     });
 
-    /* ===================== ADMIN EXPORT/RESET NITRO ===================== */
+    /* ===================== INVOICES (GOTOVO) ===================== */
+    const invoicesRef = db.ref("invoices");
+
+    function buildInvoiceItems(){
+      const items = [];
+      Object.keys(cart).forEach(k=>{
+        const qty = cart[k]||0;
+        if(qty>0){
+          items.push({
+            key:k,
+            label: labelItem(k),
+            qty,
+            unit: PRICES[k].cust,
+            subtotal: PRICES[k].cust * qty
+          });
+        }
+      });
+      return items;
+    }
+
+    function finishInvoice(){
+      if(!mech) return alert("Uloguj se imenom prvo.");
+      const items = buildInvoiceItems();
+      if(items.length===0) return alert("Nema stavki.");
+
+      let total = 0;
+      items.forEach(i=>total += i.subtotal);
+
+      invoicesRef.push({
+        mechanic: mech,
+        time: Date.now(),
+        total,
+        items
+      });
+
+      toast("Sačuvano: GOTOVO");
+      clearCart();
+    }
+
+    function renderInvoices(list){
+      const tb = $("invoiceBody");
+      if(!tb) return;
+
+      tb.innerHTML = "";
+      list.sort((a,b)=>b.time-a.time);
+
+      list.forEach(inv=>{
+        const dt = new Date(inv.time).toLocaleString();
+        const itemsText = (inv.items||[]).map(i=>`${i.label} x${i.qty}`).join(", ");
+        tb.innerHTML += `
+          <tr>
+            <td>${dt}</td>
+            <td>${inv.mechanic || ""}</td>
+            <td>${money(inv.total)}</td>
+            <td class="left">${itemsText}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function getDateRange(){
+      const f = $("fromDate")?.value;
+      const t = $("toDate")?.value;
+      const fromMs = f ? new Date(f+"T00:00:00").getTime() : null;
+      const toMs   = t ? new Date(t+"T23:59:59").getTime() : null;
+      return {fromMs, toMs};
+    }
+
+    function applyInvoiceFilter(){
+      const all = window.__allInvoices || [];
+      const {fromMs, toMs} = getDateRange();
+
+      const filtered = all.filter(inv=>{
+        if(fromMs && inv.time < fromMs) return false;
+        if(toMs && inv.time > toMs) return false;
+        return true;
+      });
+
+      renderInvoices(filtered);
+    }
+
+    function bindInvoicesLive(){
+      if(!adminUnlocked) return;
+      invoicesRef.limitToLast(500).on("value", snap=>{
+        const all=[];
+        snap.forEach(s=>all.push(s.val()));
+        window.__allInvoices = all;
+        applyInvoiceFilter();
+      });
+    }
+
+    /* ===================== ADMIN: NITRO EXPORT/RESET ===================== */
     function downloadFile(filename, content, type){
       const blob = new Blob([content], {type});
       const url = URL.createObjectURL(blob);
@@ -663,6 +810,7 @@
       db.ref("jobs").once("value").then(snap=>{
         const perMech = {};
         let firmProfit = 0;
+
         snap.forEach(s=>{
           const d=s.val();
           if(d.item === "full"){
@@ -689,6 +837,7 @@
     function buildJobButtons(){
       const grid = $("jobGrid");
       grid.innerHTML = "";
+
       JOBS_UI.forEach(j=>{
         const el = document.createElement("div");
         el.className = "item";
@@ -708,16 +857,21 @@
       grid.querySelectorAll("button[data-job]").forEach(b=>{
         b.addEventListener("click", ()=>{
           if(!mech){ alert("Uloguj se imenom prvo."); return; }
+
           const k = b.dataset.job;
           cart[k] = (cart[k]||0)+1;
           $("qty_"+k).textContent = cart[k];
 
+          // log svaki klik u jobs (za moju računicu + public stats + bonus)
           db.ref("jobs").push({ mechanic: mech, item: k, customer: PRICES[k].cust, time: Date.now() });
+
+          // public counters samo full/sound
           if(k==="full" || k==="sound"){
             db.ref("publicStats/"+mech+"/"+k).transaction(v=>(v||0)+1);
           }
 
           renderCustomer();
+          renderMechTotal();
           toast("Dodato: "+labelItem(k));
         });
       });
@@ -730,8 +884,18 @@
       mech = name;
       localStorage.setItem("mechanic", mech);
       $("mechLabel").textContent = mech;
+
+      // show menu
+      $("jobBox").style.display = "block";
+
+      // init nitro row
       ensureNitroRow(mech);
+
+      // bind my stats
       bindMyStats();
+
+      // reset current cart UI totals
+      renderMechTotal();
       toast("Ulogovan: "+mech);
     }
 
@@ -739,6 +903,8 @@
       mech = "";
       localStorage.removeItem("mechanic");
       $("mechLabel").textContent = "—";
+      $("jobBox").style.display = "none";
+      clearCart();
       toast("Odjava");
     }
 
@@ -748,6 +914,7 @@
         adminUnlocked = true;
         $("adminLock").style.display = "none";
         $("adminPanel").style.display = "block";
+        bindInvoicesLive();
         toast("Admin OK");
       }else{
         alert("Pogrešan PIN");
@@ -762,23 +929,37 @@
 
       $("btnLogin").addEventListener("click", loginMechanic);
       $("btnLogout").addEventListener("click", logoutMechanic);
-      $("btnAdminUnlock").addEventListener("click", unlockAdmin);
+      $("btnDone").addEventListener("click", finishInvoice);
+      $("btnClear").addEventListener("click", ()=>{ clearCart(); toast("Očišćeno"); });
 
+      $("btnAdminUnlock").addEventListener("click", unlockAdmin);
       $("btnAddMech").addEventListener("click", addMechanic);
+
+      $("btnFilterInvoices").addEventListener("click", applyInvoiceFilter);
+      $("btnClearFilter").addEventListener("click", ()=>{
+        $("fromDate").value="";
+        $("toDate").value="";
+        applyInvoiceFilter();
+      });
+
       $("btnNitroCSV").addEventListener("click", exportNitroCSV);
       $("btnNitroTXT").addEventListener("click", exportNitroTXT);
       $("btnNitroReset").addEventListener("click", resetNitro);
+
       $("btnWeekly").addEventListener("click", computeWeeklyBonus);
 
       buildJobButtons();
 
+      // restore mech
       if(mech){
         $("mechLabel").textContent = mech;
+        $("jobBox").style.display = "block";
         ensureNitroRow(mech);
         bindMyStats();
       }
 
       renderCustomer();
+      renderMechTotal();
     });
   </script>
 </body>
